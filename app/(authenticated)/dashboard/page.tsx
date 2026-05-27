@@ -335,7 +335,7 @@ export default function DashboardPage() {
     };
   }, [user, fetchMetrics]);
 
-  // Handle date range input change
+  // Handle date range input change — only update display value, don't trigger fetch
   const handleDaysChange = useCallback((value: string | number | null) => {
     const raw = value === null ? '' : String(value);
     setDaysInputValue(raw);
@@ -359,8 +359,18 @@ export default function DashboardPage() {
     }
 
     setDaysError(null);
-    setTrailingDays(num);
+    // Don't set trailingDays here — wait for Enter/blur
   }, []);
+
+  // Apply the days filter (called on Enter key or blur)
+  const applyDaysFilter = useCallback(() => {
+    const num = Number(daysInputValue);
+    if (!isNaN(num) && Number.isInteger(num) && num >= TRAILING_DAYS_MIN && num <= TRAILING_DAYS_MAX) {
+      if (num !== trailingDays) {
+        setTrailingDays(num);
+      }
+    }
+  }, [daysInputValue, trailingDays]);
 
   // ─── Loading State ───────────────────────────────────────────────────────────
 
@@ -407,7 +417,12 @@ export default function DashboardPage() {
                 Period (days)
               </Text>
             </Group>
-            <div style={{ width: 100 }} data-testid="trailing-days-input">
+            <div
+              style={{ width: 100 }}
+              data-testid="trailing-days-input"
+              onBlur={applyDaysFilter}
+              onKeyDown={(e) => { if (e.key === 'Enter') applyDaysFilter(); }}
+            >
               <Input
                 value={daysInputValue}
                 onChange={handleDaysChange}
