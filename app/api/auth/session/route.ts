@@ -57,6 +57,7 @@ export async function GET() {
       const headers = await getAuthHeaders();
       const daasUrl = getDaasUrl();
 
+      // Fetch user profile
       const response = await fetch(`${daasUrl}/api/users/me`, {
         headers,
         cache: 'no-store',
@@ -68,8 +69,10 @@ export async function GET() {
 
         // Extract user status for deactivation check (Requirement 17.8)
         userStatus = daasUser.status || null;
+        firstName = daasUser.first_name || null;
+        lastName = daasUser.last_name || null;
 
-        // Extract role
+        // Extract role - try direct field first
         if (daasUser.role) {
           role = typeof daasUser.role === 'object' ? daasUser.role.name : daasUser.role;
         }
@@ -77,9 +80,50 @@ export async function GET() {
           const firstRole = daasUser.roles[0];
           role = typeof firstRole === 'object' ? firstRole.name : firstRole;
         }
+      }
 
-        firstName = daasUser.first_name || null;
-        lastName = daasUser.last_name || null;
+      // If role not found from /users/me, fetch from roles endpoint
+      if (!role) {
+        try {
+          const rolesResponse = await fetch(`${daasUrl}/api/users/me?fields=*,roles.role_id.name,roles.role_id.id`, {
+            headers,
+            cache: 'no-store',
+          });
+          if (rolesResponse.ok) {
+            const rolesData = await rolesResponse.json();
+            const rolesUser = rolesData.data || rolesData;
+            if (rolesUser.roles && rolesUser.roles.length > 0) {
+              const firstRole = rolesUser.roles[0];
+              if (firstRole.role_id && typeof firstRole.role_id === 'object') {
+                role = firstRole.role_id.name;
+              } else if (typeof firstRole === 'string') {
+                role = firstRole;
+              }
+            }
+          }
+        } catch {
+          // Fallback: try to get role from access/policies
+        }
+      }
+
+      // Final fallback: check if user has admin_access via policies
+      if (!role) {
+        try {
+          const accessResponse = await fetch(`${daasUrl}/api/access?filter[user][_eq]=${user.id}`, {
+            headers,
+            cache: 'no-store',
+          });
+          if (accessResponse.ok) {
+            const accessData = await accessResponse.json();
+            const entries = accessData.data || accessData;
+            if (Array.isArray(entries) && entries.length > 0) {
+              // User has access entries — assume admin if they have admin_access policy
+              role = 'admin';
+            }
+          }
+        } catch {
+          // Cannot determine role — will default to null
+        }
       }
     } catch {
       // DaaS not available — return basic session info without status check

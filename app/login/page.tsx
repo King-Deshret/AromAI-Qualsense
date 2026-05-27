@@ -195,6 +195,11 @@ export default function LoginPage() {
               <Button type="submit" fullWidth loading={loading} mt="sm">
                 Sign in
               </Button>
+
+              <Text ta="center" size="sm" mt="sm">
+                Don&apos;t have an account?{' '}
+                <a href="/signup" style={{ color: 'var(--mantine-color-blue-6)' }}>Sign up</a>
+              </Text>
             </Stack>
           </form>
         </Paper>
