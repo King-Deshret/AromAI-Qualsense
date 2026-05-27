@@ -7,6 +7,7 @@ frontend:
         - pnpm install
     build:
       commands:
+        - env | grep -i NEXT_PUBLIC || true
         - pnpm build
   artifacts:
     baseDirectory: .next
@@ -15,3 +16,4 @@ frontend:
   cache:
     paths:
       - node_modules/**
+      - .next/cache/**

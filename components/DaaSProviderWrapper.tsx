@@ -1,64 +1,38 @@
 /**
- * @buildpad-origin @buildpad/cli/api-routes/DaaSProviderWrapper
- * @buildpad-version 1.0.0
- *
- * This file was copied from Buildpad UI Packages.
- * To update, run: npx @buildpad/cli add api-routes/DaaSProviderWrapper --overwrite
- *
- * Docs: https://buildpad.dev/components/api-routes/DaaSProviderWrapper
- */
-
-/**
  * DaaS Provider Wrapper
  *
- * A 'use client' wrapper that configures DaaSProvider with the DaaS URL
- * and a getToken callback that reads the live Supabase session JWT.
- * Also reads the `daas_resource_uri` cookie and injects it as the
- * `X-Resource-Uri` header so scope-based RBAC works on direct DaaS calls.
+ * Configures DaaSProvider to use the Next.js API proxy routes instead of
+ * calling DaaS directly. This avoids CORS issues and ensures auth tokens
+ * are handled server-side via the proxy routes.
  *
- * Usage — place inside app/(authenticated)/layout.tsx, NOT in the root layout:
- *
- *   export default function AuthenticatedLayout({ children }) {
- *     return <DaaSProviderWrapper>{children}</DaaSProviderWrapper>;
- *   }
- *
- * @buildpad/origin: components/DaaSProviderWrapper
- * @buildpad/version: 1.0.0
+ * All Buildpad services (ItemsService, FieldsService, etc.) will call
+ * /api/items/*, /api/fields/*, etc. on the same origin.
  */
 
 "use client";
 
 import { DaaSProvider } from "@/lib/buildpad/services";
-import { createClient } from "@/lib/supabase/client";
 import { useMemo, type ReactNode } from "react";
 
 export function DaaSProviderWrapper({ children }: { children: ReactNode }) {
   const config = useMemo(
     () => ({
-      url: process.env.NEXT_PUBLIC_BUILDPAD_DAAS_URL ?? "",
+      // Use same-origin proxy routes (e.g. /api/items/lots)
+      // instead of calling DaaS directly from the browser.
+      // Empty string = relative URLs = same origin.
+      url: "",
       getToken: async () => {
-        const supabase = createClient();
-        const { data } = await supabase.auth.getSession();
-        return data.session?.access_token ?? null;
-      },
-      /**
-       * Inject the active tenant scope header into every direct DaaS call.
-       * The Next.js middleware stores the scope in a `daas_resource_uri` cookie.
-       * Without this header, DaaS falls back to root scope and may return 403
-       * for users whose role is only assigned at tenant level.
-       */
-      getHeaders: async (): Promise<Record<string, string>> => {
-        if (typeof document === "undefined") return {};
-        const raw = document.cookie
-          .split("; ")
-          .find((r) => r.startsWith("daas_resource_uri="))
-          ?.split("=")[1];
-        if (!raw) return {};
-        return { "X-Resource-Uri": decodeURIComponent(raw) };
+        // No token needed for proxy mode — the proxy routes
+        // read the Supabase session cookie and forward the JWT server-side.
+        return null;
       },
     }),
     []
   );
 
-  return <DaaSProvider config={config}>{children}</DaaSProvider>;
+  return (
+    <DaaSProvider config={config} autoFetchUser={false}>
+      {children}
+    </DaaSProvider>
+  );
 }
