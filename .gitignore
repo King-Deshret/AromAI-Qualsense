@@ -26,3 +26,9 @@ yarn-error.log*
 .vscode/mcp.json
 .kiro/settings/mcp.json
 .gemini/antigravity/mcp_config.json
+
+# Testing
+/coverage
+/playwright-report
+/test-results
+/blob-report

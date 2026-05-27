@@ -1,0 +1,1343 @@
+{
+  "$schema": "https://buildpad.dev/schema.json",
+  "schemaVersion": 2,
+  "model": "copy-own",
+  "tsx": true,
+  "srcDir": false,
+  "aliases": {
+    "components": "@/components/ui",
+    "lib": "@/lib/buildpad"
+  },
+  "installedLib": [
+    "supabase-auth",
+    "api-routes",
+    "types",
+    "services",
+    "hooks",
+    "utils"
+  ],
+  "installedComponents": [
+    "input",
+    "textarea",
+    "input-code",
+    "input-hash",
+    "system-token",
+    "system-permissions",
+    "input-block-editor",
+    "tags",
+    "select-dropdown",
+    "select-radio",
+    "select-multiple-checkbox",
+    "select-multiple-checkbox-tree",
+    "select-multiple-dropdown",
+    "select-icon",
+    "autocomplete-api",
+    "boolean",
+    "toggle",
+    "datetime",
+    "color",
+    "slider",
+    "upload",
+    "file",
+    "file-image",
+    "files",
+    "vtable",
+    "filter-panel",
+    "collection-list",
+    "list-m2m",
+    "select-dropdown-m2o",
+    "list-o2m",
+    "divider",
+    "notice",
+    "group-detail",
+    "group-accordion",
+    "group-raw",
+    "rich-text-html",
+    "rich-text-markdown",
+    "map",
+    "workflow-button",
+    "vform",
+    "save-options",
+    "collection-form",
+    "list-m2a",
+    "collection-item-dropdown",
+    "content-navigation",
+    "content-layout",
+    "map-with-real-map"
+  ],
+  "components": {
+    "input": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:37.344Z",
+      "files": [
+        {
+          "target": "components/ui/input.tsx",
+          "sha256": "19092fe196c3381b6d05b5e2bd691e7e12c39c25f77b826a66c3b074e4e7de15"
+        }
+      ]
+    },
+    "textarea": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:37.749Z",
+      "files": [
+        {
+          "target": "components/ui/textarea.tsx",
+          "sha256": "1bf2bb352f6079d3e5aa658135031ce796cc028770455526b3931e9b1e0d31c3"
+        }
+      ]
+    },
+    "input-code": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:38.181Z",
+      "files": [
+        {
+          "target": "components/ui/input-code.tsx",
+          "sha256": "ac5de406a27d3ad282eaa00766d7eb724ca45622c6c80a53012a9e3fdb83d243"
+        }
+      ]
+    },
+    "input-hash": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:38.899Z",
+      "files": [
+        {
+          "target": "components/ui/input-hash.tsx",
+          "sha256": "8bca2cf14737f13d2140f838475afee0cf81f8a4b60bbe1262cb719e5ddf59f5"
+        },
+        {
+          "target": "components/ui/InputHash.css",
+          "sha256": "66437bfbd9db67533d47427a7d1e0bced9d94fce5e155c29dc1e210e5c2d272a"
+        }
+      ]
+    },
+    "system-token": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:54.620Z",
+      "files": [
+        {
+          "target": "components/ui/system-token.tsx",
+          "sha256": "9f762577afe57541eb30c02ab375b56f3800671e61aa4785bd6dba67ffb48003"
+        },
+        {
+          "target": "components/ui/SystemToken.css",
+          "sha256": "7eb2718271ee8aac0896978d7f24cb917d538838718badf82a7c05ba43227df0"
+        }
+      ]
+    },
+    "system-permissions": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:55.312Z",
+      "files": [
+        {
+          "target": "components/ui/system-permissions.tsx",
+          "sha256": "cc211c0cb49de2d2cd346e8646d3b83a3deb9627b8f1919da88aa6a49d834073"
+        },
+        {
+          "target": "components/ui/system-permissions.css",
+          "sha256": "d14f3faec281f3992e0b2d9b5547698cfe9d603e61bb3d1b9d3d485bd5cdfc33"
+        }
+      ]
+    },
+    "input-block-editor": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:56.354Z",
+      "files": [
+        {
+          "target": "components/ui/input-block-editor-wrapper.tsx",
+          "sha256": "84998b1406594ad87f6dd9239cb9d75ff808364019ea37208aa9524962c15ff5"
+        },
+        {
+          "target": "components/ui/input-block-editor.tsx",
+          "sha256": "4f77a853fa6cdcdf2b84f2f5bce94289742b049782fb1bb5d8cfcde7bb1c4dcf"
+        },
+        {
+          "target": "components/ui/InputBlockEditor.css",
+          "sha256": "786f91d7d38f1660795c656658cbb029a5d465d666c4ecbe594b9d19060e6e6e"
+        }
+      ]
+    },
+    "tags": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:56.797Z",
+      "files": [
+        {
+          "target": "components/ui/tags.tsx",
+          "sha256": "ab817f0e92dfc5ba4378238eba1fa0934ac1f32115d55450e36da7553a5e58c2"
+        }
+      ]
+    },
+    "select-dropdown": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:57.127Z",
+      "files": [
+        {
+          "target": "components/ui/select-dropdown.tsx",
+          "sha256": "13f53eec48c3cac46018883c33284973ea54b8ad34a2450ba9cdc74948ff6c3c"
+        }
+      ]
+    },
+    "select-radio": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:57.451Z",
+      "files": [
+        {
+          "target": "components/ui/select-radio.tsx",
+          "sha256": "e8914bb03aadab770b220201a539a4561e423b6926833abad53d45103f15f145"
+        }
+      ]
+    },
+    "select-multiple-checkbox": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:57.793Z",
+      "files": [
+        {
+          "target": "components/ui/select-multiple-checkbox.tsx",
+          "sha256": "ea62f3a7b97cf29a349c345702ad4fd0c88aa5968cf7d54cde1fc8e8ee07b228"
+        }
+      ]
+    },
+    "select-multiple-checkbox-tree": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:58.188Z",
+      "files": [
+        {
+          "target": "components/ui/select-multiple-checkbox-tree.tsx",
+          "sha256": "f5806ed3e4a992a60b8eda8383ec221f6a02f7df739ce0fd16e76323ae0aa321"
+        }
+      ]
+    },
+    "select-multiple-dropdown": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:58.555Z",
+      "files": [
+        {
+          "target": "components/ui/select-multiple-dropdown.tsx",
+          "sha256": "4420dca58b41ec6a15b07db258ad673f4fe521a0ef86f3be495a0a5dec39c511"
+        }
+      ]
+    },
+    "select-icon": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:59.025Z",
+      "files": [
+        {
+          "target": "components/ui/select-icon.tsx",
+          "sha256": "bd8df494046cf952775f3e7c2ed33d94aac0aa98a3618f0ac32d3fc3f59893f4"
+        }
+      ]
+    },
+    "autocomplete-api": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:56:59.426Z",
+      "files": [
+        {
+          "target": "components/ui/autocomplete-api.tsx",
+          "sha256": "2c6fb1ac9eeb814706d22a1835903b668668233f55d1a1153fc2b840467b540f"
+        }
+      ]
+    },
+    "boolean": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:02.968Z",
+      "files": [
+        {
+          "target": "components/ui/boolean.tsx",
+          "sha256": "1318cf75d80ef2c91c4d248f96a210bd69708ce4a6587f4b8c048994125e8e4c"
+        }
+      ]
+    },
+    "toggle": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:03.340Z",
+      "files": [
+        {
+          "target": "components/ui/toggle.tsx",
+          "sha256": "81c0181f47f6c6f62af3117e58e6fe74d7c4c678d57a41561614c511cce9821d"
+        }
+      ]
+    },
+    "datetime": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:03.713Z",
+      "files": [
+        {
+          "target": "components/ui/datetime.tsx",
+          "sha256": "9d14843f3ba48fc57c7373f74c7a3ee2868dbc68228cfa99d992956656b62238"
+        }
+      ]
+    },
+    "color": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:04.064Z",
+      "files": [
+        {
+          "target": "components/ui/color.tsx",
+          "sha256": "b232be06715c8087a84f0558e203b4a9c1f451ee085530291ce908ff71693685"
+        }
+      ]
+    },
+    "slider": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:04.546Z",
+      "files": [
+        {
+          "target": "components/ui/slider.tsx",
+          "sha256": "bc529625ce7d5c275f06334286af70c5bcb1855f8dce749692c4341f314b6d51"
+        }
+      ]
+    },
+    "upload": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:05.171Z",
+      "files": [
+        {
+          "target": "components/ui/upload.tsx",
+          "sha256": "7bfb56c7c1efe77c85ab9bdaf02b72f913d548faa5e46872840d2c98f4d702e4"
+        },
+        {
+          "target": "components/ui/upload.css",
+          "sha256": "2cba51f7672969b62c460a9e1309cb87cf68ccb50c075ffb57ff6e45d8ad3d45"
+        }
+      ]
+    },
+    "file": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:05.504Z",
+      "files": [
+        {
+          "target": "components/ui/file.tsx",
+          "sha256": "1643776423afd8df5d162b23fab6d3f491cb3076c0a874ec0ae678c3875c9b31"
+        }
+      ]
+    },
+    "file-image": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:05.863Z",
+      "files": [
+        {
+          "target": "components/ui/file-image.tsx",
+          "sha256": "ee777396916c52dd45f4da835eab303c94d97ba8867860da2f8c82d7082f4184"
+        }
+      ]
+    },
+    "files": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:06.206Z",
+      "files": [
+        {
+          "target": "components/ui/files.tsx",
+          "sha256": "df65dfcf268a4d04ae35291a35478310ea90b6c2644a902370a5fe4c83f6a106"
+        }
+      ]
+    },
+    "vtable": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-table",
+      "installedAt": "2026-05-26T13:57:08.598Z",
+      "files": [
+        {
+          "target": "components/ui/vtable.tsx",
+          "sha256": "fa1639d17771c841c6c1da8c47004551a3b07a698839d280a7a03f3916f42823"
+        },
+        {
+          "target": "components/ui/vtable.css",
+          "sha256": "8bc2673916d186c90a282c70d6b886f8ec10c915ac510d6682a078a81c3e30dd"
+        },
+        {
+          "target": "components/ui/table-header.tsx",
+          "sha256": "a4241378c98f911635efc86394ec75795f0bc12eadf225cfb1ebc234c4fb0706"
+        },
+        {
+          "target": "components/ui/table-header.css",
+          "sha256": "dd62b4e5790440a8b5942d4c6f4a2819293a889b74bfde1c4f47e04c5f826a2b"
+        },
+        {
+          "target": "components/ui/table-row.tsx",
+          "sha256": "57648515ce6436d2a9887f8d9a10dc91f1233132de673cb5c84707d9776e747d"
+        },
+        {
+          "target": "components/ui/table-row.css",
+          "sha256": "248459ad1bf157014786fe688274f6e4e5cd4c0f600c569deca784bed143e176"
+        },
+        {
+          "target": "components/ui/vtable-types.ts",
+          "sha256": "b93fe701f06eba776a98ac6c57cd0ae3a0d47222325dbd80a090880a611a32a1"
+        }
+      ]
+    },
+    "filter-panel": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-collections",
+      "installedAt": "2026-05-26T13:57:08.934Z",
+      "files": [
+        {
+          "target": "components/ui/filter-panel.tsx",
+          "sha256": "383ecc73ee6aca88c4e3bb8b3a0897ea7561e747e005111d33d42c4269bfc54d"
+        }
+      ]
+    },
+    "collection-list": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-collections",
+      "installedAt": "2026-05-26T13:57:10.999Z",
+      "files": [
+        {
+          "target": "components/ui/collection-list.tsx",
+          "sha256": "30f710100a77c53f870d61819918c0bbe3f8fbd44c179aed3fc87419c61c102a"
+        },
+        {
+          "target": "components/ui/collection-list.css",
+          "sha256": "796f5094603dde224c598e77a4f97b3f89ad88193bbb98477d937a56b5b652d9"
+        },
+        {
+          "target": "components/ui/collection-list-toolbar.tsx",
+          "sha256": "808960c7284c85cf2211ae68522acf4057f645ec2938b44ea1936ab2ca553bd6"
+        },
+        {
+          "target": "components/ui/collection-list-footer.tsx",
+          "sha256": "95749fd9e4bbb7cc3d582606a84dcf90e716dcaaf1edae70f1cd8abc53162d15"
+        },
+        {
+          "target": "components/ui/delete-confirm-modal.tsx",
+          "sha256": "48fadde99a93aa74036883f9c8b1e16ddd3e161e62cf1a1dccd21ecea3e86470"
+        },
+        {
+          "target": "components/ui/bulk-actions-bar.tsx",
+          "sha256": "a85810d79439b0d00d87bfaa23588e6af3d2ec0aae9fc7952ccd5d6cd2ff7534"
+        }
+      ]
+    },
+    "list-m2m": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:12.058Z",
+      "files": [
+        {
+          "target": "components/ui/list-m2m.tsx",
+          "sha256": "85eae89c949553337030cd8818f0cdbe51b757bfd146d291372b3b0279586b07"
+        },
+        {
+          "target": "components/ui/list-m2m-interface.tsx",
+          "sha256": "70dcb408db72dd8a34389bff67d0fa9f42dca4f009816e3afc9f07983c73414c"
+        },
+        {
+          "target": "components/ui/list-m2m/translations.ts",
+          "sha256": "7f8ea929a63ad399c09ad7a1e4c53346a3064f83fbaa99c7fe42ccdab1d73f75"
+        }
+      ]
+    },
+    "select-dropdown-m2o": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:12.733Z",
+      "files": [
+        {
+          "target": "components/ui/select-dropdown-m2o.tsx",
+          "sha256": "fcc579f559e25cb53363bc7ef7b30baf879baeaae581d16813ec5a1b871bf09a"
+        },
+        {
+          "target": "components/ui/select-dropdown-m2o-interface.tsx",
+          "sha256": "b130374f3d962062ff6dbe9ae9acc9cfc51deb787f94428cd6ff677c188976e8"
+        }
+      ]
+    },
+    "list-o2m": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:13.104Z",
+      "files": [
+        {
+          "target": "components/ui/list-o2m.tsx",
+          "sha256": "77d55f1a0549b4944635d5d390c0e60530e548233235befc5bf4e8209a466815"
+        }
+      ]
+    },
+    "divider": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:13.439Z",
+      "files": [
+        {
+          "target": "components/ui/divider.tsx",
+          "sha256": "1f13abcf2b3b4e613723dfe2b2229ab216a214b1e6e4f41963eff4130666f41f"
+        }
+      ]
+    },
+    "notice": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:13.770Z",
+      "files": [
+        {
+          "target": "components/ui/notice.tsx",
+          "sha256": "0440161147c0c836a31fbf3b7742a1733746294c0043342c476f06932a4f59c9"
+        }
+      ]
+    },
+    "group-detail": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:14.147Z",
+      "files": [
+        {
+          "target": "components/ui/group-detail.tsx",
+          "sha256": "961030c02aba46dea10dee0784e9d86f915b79e466198232cb05d94b49cb8e7f"
+        }
+      ]
+    },
+    "group-accordion": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:14.501Z",
+      "files": [
+        {
+          "target": "components/ui/group-accordion.tsx",
+          "sha256": "a5d84b3752030a4423de326c85f98f02ad1eb9866662a3d983a85b6cb8f3c229"
+        }
+      ]
+    },
+    "group-raw": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:14.863Z",
+      "files": [
+        {
+          "target": "components/ui/group-raw.tsx",
+          "sha256": "c05d5b33a84bdc0e29a93deb5f418eb118a91be2c50233c46f921acf47537751"
+        }
+      ]
+    },
+    "rich-text-html": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:15.592Z",
+      "files": [
+        {
+          "target": "components/ui/rich-text-html.tsx",
+          "sha256": "7e28c3efd9b7b27449bf8add063225e6a5ed7274c55fd6f72cff19962b448a29"
+        },
+        {
+          "target": "components/ui/RichTextHTML.css",
+          "sha256": "6e93144cdc94e9c1b43ba45f9deac1c27b898a01ab35d0da530d0808579bcb96"
+        }
+      ]
+    },
+    "rich-text-markdown": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:16.328Z",
+      "files": [
+        {
+          "target": "components/ui/rich-text-markdown.tsx",
+          "sha256": "c5b51ec83549b561c0905f4e21cc870abb414c8f1ab715fc0f7a1a62266e88e8"
+        },
+        {
+          "target": "components/ui/RichTextMarkdown.css",
+          "sha256": "2eaac51bc3e2db2bcad78e2e1b6833f28cc10ddd03253c164445a8c080e50cf7"
+        }
+      ]
+    },
+    "map": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:16.702Z",
+      "files": [
+        {
+          "target": "components/ui/map.tsx",
+          "sha256": "9a70daf2c55b28bb348a6e3e3d97b8fefad774d982ef269b7d16bae8754c7e55"
+        }
+      ]
+    },
+    "workflow-button": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:18.314Z",
+      "files": [
+        {
+          "target": "components/ui/workflow-button/workflow-button.tsx",
+          "sha256": "40f80783aa079da47e563c73276fb3abf2fe003e5902484441a35f32b071adef"
+        },
+        {
+          "target": "components/ui/workflow-button/use-workflow.ts",
+          "sha256": "36cc1ef91dd2bca8805052eefd8338050f499e4569e95ac3d06b7e83b6b6d3fe"
+        },
+        {
+          "target": "components/ui/workflow-button/types.ts",
+          "sha256": "4787ca2dbf30d8a52bb07d4f1bd30c3f4446a79ceff90797b59e4481690c2a42"
+        },
+        {
+          "target": "components/ui/workflow-button/index.ts",
+          "sha256": "059f912de61a7af69e16b6a5c191766ce92fe933832729c50b805dcb97265d92"
+        }
+      ]
+    },
+    "vform": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-form",
+      "installedAt": "2026-05-26T13:57:25.086Z",
+      "files": [
+        {
+          "target": "components/ui/vform/VForm.tsx",
+          "sha256": "db0a9c5490a6a50086d7794181a47023678c2bc1bccb4fe38689c977f5b203fd"
+        },
+        {
+          "target": "components/ui/vform/VForm.css",
+          "sha256": "daa47f7807775a54921037fafd1e3f033e78d9c738c9be18e9608604e68b9e8d"
+        },
+        {
+          "target": "components/ui/vform/types.ts",
+          "sha256": "56b3c4f247a3e9403aab3919e4ae6c22d77e8c67893e285559712cf5490e48e8"
+        },
+        {
+          "target": "components/ui/vform/components/FormField.tsx",
+          "sha256": "35e5d0f5a444784bcef76657fc3c105885b5fa3094cba6f93e368a867b26b399"
+        },
+        {
+          "target": "components/ui/vform/components/FormFieldLabel.tsx",
+          "sha256": "45e52e028f4fa177f8d36004a1dff3fe6f64054e63a4a328c9a2bf4530ffcc2c"
+        },
+        {
+          "target": "components/ui/vform/components/FormFieldInterface.tsx",
+          "sha256": "324dac3a53a8c524419d1787c070deb48fe3f83283307186ab49cc66d487cb97"
+        },
+        {
+          "target": "components/ui/vform/components/FormGroupField.tsx",
+          "sha256": "fc08b8ca3351e66548ae18dcf1394b5d23ac00aa9aa6d41cf87cd6cbaebf5042"
+        },
+        {
+          "target": "components/ui/vform/components/InterfaceErrorBoundary.tsx",
+          "sha256": "b06bcdcd67efd51f3b5c61730bc128967b85913556909410ebab321cbf8d7ab5"
+        },
+        {
+          "target": "components/ui/vform/components/ValidationErrors.tsx",
+          "sha256": "843d2d65a97850f67603bc174fd42cfed793cbd80d02a8651ed88be01f3ef31d"
+        },
+        {
+          "target": "components/ui/vform/components/index.ts",
+          "sha256": "05155cc2f3d6f323792fdb342c439de0a7d8d908bd2e549c86a129e088e7f257"
+        },
+        {
+          "target": "components/ui/vform/utils/get-default-values.ts",
+          "sha256": "052a38295bd5ad67ac0f5d514731bfa47ec7836d00eb581c9e00b9cc90d1772d"
+        },
+        {
+          "target": "components/ui/vform/utils/get-form-fields.ts",
+          "sha256": "fafcd07c7af5359a4c80b11821385a8b28b45c2e2457e94d500aa02aee2f9c46"
+        },
+        {
+          "target": "components/ui/vform/utils/update-field-widths.ts",
+          "sha256": "e85c43fdc7d8b6ed0162f01a177efddf4f28373171b39fa543f2a28fde137ea9"
+        },
+        {
+          "target": "components/ui/vform/utils/apply-conditions.ts",
+          "sha256": "99d62890099229be4c21928eeb2be125d757179f207102d395e1196d9661a0cd"
+        },
+        {
+          "target": "components/ui/vform/utils/push-group-options-down.ts",
+          "sha256": "72dd2f881129a730f36095329aeb99a8bedae26374bcaa1223f10e4b8240820d"
+        },
+        {
+          "target": "components/ui/vform/utils/set-primary-key-readonly.ts",
+          "sha256": "41b3d8a76b41c59d934109b320865cae79cc12029ebeb55bd2d5a6f646ba1e19"
+        },
+        {
+          "target": "components/ui/vform/utils/update-system-divider.ts",
+          "sha256": "355e68ff6ecb395da1b1590a226485ddc2b3728a340f185e319546672a519eeb"
+        },
+        {
+          "target": "components/ui/vform/utils/index.ts",
+          "sha256": "75e7fa28d23560b030b0fba6197966e46d482fd9357fc06fb7b44526202d30f4"
+        },
+        {
+          "target": "components/ui/vform/index.ts",
+          "sha256": "da2c1d1eed79ecb4652b3fc3889be773f8f3917f35911e00c82fba01a75e4560"
+        }
+      ]
+    },
+    "save-options": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-collections",
+      "installedAt": "2026-05-26T13:57:25.500Z",
+      "files": [
+        {
+          "target": "components/ui/save-options.tsx",
+          "sha256": "1310b7f63b38057bd74e549a9793c78ca3da68f76c0a3991c2eab78088ec09ee"
+        }
+      ]
+    },
+    "collection-form": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-collections",
+      "installedAt": "2026-05-26T13:57:25.858Z",
+      "files": [
+        {
+          "target": "components/ui/collection-form.tsx",
+          "sha256": "f4fb26dae9eba6e0d30ce9aef669d47b4effd07bac545313e7893c04fc2f9959"
+        }
+      ]
+    },
+    "list-m2a": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:26.893Z",
+      "files": [
+        {
+          "target": "components/ui/list-m2a.tsx",
+          "sha256": "565765d98e5d0f31f7d9ebd50c5483ce4b41662c39c431604d32a139173014df"
+        },
+        {
+          "target": "components/ui/list-m2a/JunctionItemForm.tsx",
+          "sha256": "4d665f17be398d43593fa211c92072d1de9537962bdc6484c6dc94aecc1dd13e"
+        },
+        {
+          "target": "components/ui/list-m2a/render-template.ts",
+          "sha256": "9c004bbf84b76cb0f44c1a5a1ca8a2441e20812788e5631482546b47e06a025b"
+        }
+      ]
+    },
+    "collection-item-dropdown": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:27.342Z",
+      "files": [
+        {
+          "target": "components/ui/collection-item-dropdown.tsx",
+          "sha256": "69996ebdb5b08c93a1491f1b20a330901db38e75a8391966f2ca355849fbcb5c"
+        }
+      ]
+    },
+    "content-navigation": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-collections",
+      "installedAt": "2026-05-26T13:57:27.727Z",
+      "files": [
+        {
+          "target": "components/ui/content-navigation.tsx",
+          "sha256": "06ff5561edbc0f1406715a5d87913d7d4c86171866f89431214f813e09367d41"
+        }
+      ]
+    },
+    "content-layout": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-collections",
+      "installedAt": "2026-05-26T13:57:28.118Z",
+      "files": [
+        {
+          "target": "components/ui/content-layout.tsx",
+          "sha256": "8e31d412bbd1a7684d6f60b32ca03f598771fc5979983149b160ad358f796cd5"
+        }
+      ]
+    },
+    "map-with-real-map": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/ui-interfaces",
+      "installedAt": "2026-05-26T13:57:28.561Z",
+      "files": [
+        {
+          "target": "components/ui/map-with-real-map.tsx",
+          "sha256": "ae0b2c162f660d38d7b8f44d3107633ffc8378cd4a279973297e8a3ef7556909"
+        }
+      ]
+    }
+  },
+  "lib": {
+    "supabase-auth": {
+      "version": "1.0.0",
+      "sourcePackage": "@buildpad/cli",
+      "installedAt": "2026-05-26T13:56:30.852Z",
+      "files": [
+        {
+          "target": "lib/supabase/client.ts",
+          "sha256": "af193762a219fb279f72345d8d12d0164b5e367d9ff6874b68351fabc4841f5e"
+        },
+        {
+          "target": "lib/supabase/server.ts",
+          "sha256": "5a2ff2ebb53938a6a2090ddc11f196ea66af1d45a1cc46b84e98ff4c8a06df8a"
+        },
+        {
+          "target": "lib/supabase/middleware.ts",
+          "sha256": "0c4774d02fff2d3b8248093b26ba39c476ce712cee1735f557eb3bf5d041679f"
+        },
+        {
+          "target": "lib/supabase/admin.ts",
+          "sha256": "1edddb43e5ab82de1787483b91206196db2f5f79069883d3ffd9e1edd2f8ca5c"
+        },
+        {
+          "target": "middleware.ts",
+          "sha256": "382591a2830ed8c6155affd3c37427ef66af407a549b8475be521bd51e143286"
+        }
+      ]
+    },
+    "api-routes": {
+      "version": "1.0.0",
+      "sourcePackage": "@buildpad/cli",
+      "installedAt": "2026-05-26T13:56:36.977Z",
+      "files": [
+        {
+          "target": "app/api/auth/login/route.ts",
+          "sha256": "8eaa3c34cd1a1ce4d99f5fd77effe82da484f6c10c61713a137132d9ed2ca365"
+        },
+        {
+          "target": "app/api/auth/logout/route.ts",
+          "sha256": "a534a86e057275efa4077cea8d91cae112ad7ae9501938b0646a0ebd0fb144ad"
+        },
+        {
+          "target": "app/api/auth/user/route.ts",
+          "sha256": "534f86126713aabfbdfc3fab99f73d06c64a043965a3b87db58854324ba8af73"
+        },
+        {
+          "target": "app/api/auth/callback/route.ts",
+          "sha256": "4b592578c3d56bf5576c81116400aabfc461d577dba424bf159dbd0011a23a39"
+        },
+        {
+          "target": "app/login/page.tsx",
+          "sha256": "d1e8c5eb3681c8e0870aadc7ff5408151afb45c4c23afffcf5da9f1f0a241844"
+        },
+        {
+          "target": "lib/api/auth-headers.ts",
+          "sha256": "9f56b642eba97281ceb080b2b058026c58dc2bfb47647469399ea9cf7b1b811a"
+        },
+        {
+          "target": "app/api/fields/[collection]/route.ts",
+          "sha256": "d1b167f38452e1158954ce79f74c7228519646ccb1cdb18b18b22fad1f1f26a1"
+        },
+        {
+          "target": "app/api/items/[collection]/route.ts",
+          "sha256": "3297cc579de45820bb99e35851b3788b53ed2a0f5d0bbdec62aaef81ec09ed5a"
+        },
+        {
+          "target": "app/api/items/[collection]/[id]/route.ts",
+          "sha256": "b3b813c0d23a34544b1d025b6de0cbdcb3434ec303327d1cf81845bc06cd4dc1"
+        },
+        {
+          "target": "app/api/relations/route.ts",
+          "sha256": "818ac0960398c4fcc38e0f086b81641049ed9053a3365147fe6fb3ced427a258"
+        },
+        {
+          "target": "app/api/files/route.ts",
+          "sha256": "22f87fcca2b773c2498f759ae42624fa6d2cba149ee6771f14c524cf37a9e77e"
+        },
+        {
+          "target": "app/api/files/[id]/route.ts",
+          "sha256": "30ad8a35d1f9066d6539220b2639e6d60d0457dcebf5a8d54336ca1220889a5c"
+        },
+        {
+          "target": "app/api/assets/[id]/route.ts",
+          "sha256": "94562dd04457bcbd522b2532d8d6154317be51f2568700e304ccee4467b24272"
+        },
+        {
+          "target": "app/api/permissions/me/route.ts",
+          "sha256": "45ed445c12bec683629180a71c359529177ed4bb51764f350be23a0f20097087"
+        },
+        {
+          "target": "components/DaaSProviderWrapper.tsx",
+          "sha256": "df2d44b9fb9bcbcce5e4edd3913e298e4c6c98386db35f67229701814195e12b"
+        },
+        {
+          "target": "app/(authenticated)/layout.tsx",
+          "sha256": "799b40bcae239053b8f300f0f9c2030be03431923d0bc74276ce93b911cae759"
+        }
+      ]
+    },
+    "types": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/types",
+      "installedAt": "2026-05-26T13:56:40.337Z",
+      "files": [
+        {
+          "target": "lib/buildpad/types/core.ts",
+          "sha256": "c8cf860d7dffb5fdf1d0b52d57f55fc98892ada8d1f762874fa953b8632d06eb"
+        },
+        {
+          "target": "lib/buildpad/types/file.ts",
+          "sha256": "43f75c43349ff182591a84e0c15a5730b51838c250b5e8c2369f5e342f4e2676"
+        },
+        {
+          "target": "lib/buildpad/types/relations.ts",
+          "sha256": "838d987553cbe09d57cd5560bdde689ba0849f9de4303ea663cc66627bff2362"
+        },
+        {
+          "target": "lib/buildpad/types/index.ts",
+          "sha256": "0daf1d486099da5d5afb8f654a90c1e869128aa1feef7b67a22f6c7d428f0480"
+        }
+      ]
+    },
+    "services": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/services",
+      "installedAt": "2026-05-26T13:56:44.327Z",
+      "files": [
+        {
+          "target": "lib/buildpad/services/api-request.ts",
+          "sha256": "963a52e14f6d9dd0f3f011e1dd489707a8308a53e30be461ec4c2a259e7a3ea5"
+        },
+        {
+          "target": "lib/buildpad/services/fields.ts",
+          "sha256": "2c3abf61eb832550642120ebc785f08d632d24458cc3cea7995c624716674211"
+        },
+        {
+          "target": "lib/buildpad/services/collections.ts",
+          "sha256": "dd03bed4e221043771f9fd5040709d444a9b5680c68f8c9268453ee2ec09774f"
+        },
+        {
+          "target": "lib/buildpad/services/items.ts",
+          "sha256": "f17113e977ec981419d92367501c0efe2f1d96374f2ebccb144b5c2ab0c4db4e"
+        },
+        {
+          "target": "lib/buildpad/services/permissions.ts",
+          "sha256": "ed5ab59784291d552034665e95eb1d49b2aac1e6c0c33d7604a8ea71226b4393"
+        },
+        {
+          "target": "lib/buildpad/services/daas-context.tsx",
+          "sha256": "1974dd998a06f6cb042100b95ead6ab6e69b1fec9356c269970182ac31d8701a"
+        },
+        {
+          "target": "lib/buildpad/services/auth/index.ts",
+          "sha256": "861bb2c7ff9383147c959fd04f0fe8fcb2a713c1a16440870fa0b76fd4b8fc89"
+        },
+        {
+          "target": "lib/buildpad/services/auth/session.ts",
+          "sha256": "66cbf04c3e731b0ea86314aeba2b6f309dde4840ce59541f3c1b074b89c3f58c"
+        },
+        {
+          "target": "lib/buildpad/services/auth/enforcer.ts",
+          "sha256": "f222b9302d45d14c88417179f23357ea0cf90823953b5ec5745c6817f0c3ddcf"
+        },
+        {
+          "target": "lib/buildpad/services/auth/filter-to-query.ts",
+          "sha256": "498e44e46519230f573f4a6c99dec516f99ff82daf221ef61ed5edf56065b399"
+        },
+        {
+          "target": "lib/buildpad/services/index.ts",
+          "sha256": "d2582ad2fcdae078186dc28db670512060af9739d98bfc3b9a0a7629e54ad9d2"
+        }
+      ]
+    },
+    "hooks": {
+      "version": "0.2.0",
+      "sourcePackage": "@buildpad/hooks",
+      "installedAt": "2026-05-26T13:56:53.828Z",
+      "files": [
+        {
+          "target": "lib/buildpad/hooks/api.ts",
+          "sha256": "5de2deee001827a84c1b4f1179290c5b0105894bf8157f225e719d24c93073fd"
+        },
+        {
+          "target": "lib/buildpad/hooks/utils.ts",
+          "sha256": "8ca6352acd64ba43bf02acc93c995c766482e5c7eeae4f073a8de34c677aa033"
+        },
+        {
+          "target": "lib/buildpad/hooks/useFiles.ts",
+          "sha256": "bb7bc295d423556dd6f27b7e64268f78ed63e41d76433319bde3564de5ee28f7"
+        },
+        {
+          "target": "lib/buildpad/hooks/useRelationM2M.ts",
+          "sha256": "a2ff7c1b07c7917910e9ec4ff0c39e93ce3f90c1ad081d1fb7ede5e360987a55"
+        },
+        {
+          "target": "lib/buildpad/hooks/useRelationM2MItems.ts",
+          "sha256": "0b4f2b802d1673a9dadcd3bf538edf7cc099fc0c9ceb2190aefbd688e6c4b791"
+        },
+        {
+          "target": "lib/buildpad/hooks/useRelationM2O.ts",
+          "sha256": "ee2942acf5258104bc5cf1c6c34f1b76b94fe08988ef96466c08fb97c2081a79"
+        },
+        {
+          "target": "lib/buildpad/hooks/useRelationO2M.ts",
+          "sha256": "039fd70fd9fae9adb3c70ab63248dfcff0e78c45cf41425edb203d64b73f4763"
+        },
+        {
+          "target": "lib/buildpad/hooks/useRelationM2A.ts",
+          "sha256": "b8adf298371eaa06bfe8fd461364a08f413026ddf13b4a4b1bdc1f9e1202f139"
+        },
+        {
+          "target": "lib/buildpad/hooks/useRelationPermissionsM2A.ts",
+          "sha256": "ba5abe43fc3829b5827b015f78d353be33227bb3123a4bf3fc135bf9817eb1f9"
+        },
+        {
+          "target": "lib/buildpad/hooks/useSelection.ts",
+          "sha256": "d7ebabfa8522b132e31a4a4b5e4eeac47cb8654aefde9b319cdc207fbdb30200"
+        },
+        {
+          "target": "lib/buildpad/hooks/usePreset.ts",
+          "sha256": "86b5193cbe07861ed6ac89490ddfaed2df48a8691f9e5d8117502592ae742a6f"
+        },
+        {
+          "target": "lib/buildpad/hooks/useEditsGuard.ts",
+          "sha256": "3bfed8df1a681cd457f0c9a676714988681b39c4d777401cb45c669ca7de5ecc"
+        },
+        {
+          "target": "lib/buildpad/hooks/useClipboard.ts",
+          "sha256": "c82ba42a31667df23ad157f8db25c9619e4e8f5005acd9732562a9e5bad8e6e9"
+        },
+        {
+          "target": "lib/buildpad/hooks/useLocalStorage.ts",
+          "sha256": "03add59462e3c6d86317a66f353cc71c15af00ab9f91feba7bf83abce0843c9b"
+        },
+        {
+          "target": "lib/buildpad/hooks/useVersions.ts",
+          "sha256": "c4e70bc059952f69306944d3ea7313d8d1ed87defdfbfa5756730aa872d2f3e2"
+        },
+        {
+          "target": "lib/buildpad/hooks/useWorkflowAssignment.ts",
+          "sha256": "f7ca88d5a8b6b5aeafb262fbba348068a42c09ca8e2a49ce96555404e605a0ad"
+        },
+        {
+          "target": "lib/buildpad/hooks/useWorkflowVersioning.ts",
+          "sha256": "8e803d387ecd6fa69021810226060adf5ad1f580b13b921c9cdc98f56bd0398b"
+        },
+        {
+          "target": "lib/buildpad/hooks/useCollections.ts",
+          "sha256": "481e918ddfd6257b57bf5adf7c2475cf46616d0092e0035a17c879cec976eb26"
+        },
+        {
+          "target": "lib/buildpad/hooks/useRelationMultipleM2M.ts",
+          "sha256": "e2322c54301cdf6553013e0ab6e7d64daf33d850899605dae9d9a04073f406c7"
+        },
+        {
+          "target": "lib/buildpad/hooks/useRelationPermissionsM2M.ts",
+          "sha256": "43cc76256989cb88b533c0ecd1a59e586b14c4c846750e702dcf7d5c10894aa4"
+        },
+        {
+          "target": "lib/buildpad/hooks/useRelationPermissionsM2O.ts",
+          "sha256": "1401a957f852be89f70e964c98eaa2af3465c2fcfdce5037764d9a65ce8f8e63"
+        },
+        {
+          "target": "lib/buildpad/hooks/useFieldMetadata.ts",
+          "sha256": "c4c41d9176730883f2e1f84b08913b49fc315ad45b849e7de61c941646ccb1c3"
+        },
+        {
+          "target": "lib/buildpad/hooks/useAuth.ts",
+          "sha256": "98a05954a4adaac92473b47c5a45027e4815f37f810f42ebd1a91fa1bf4fe0ce"
+        },
+        {
+          "target": "lib/buildpad/hooks/usePermissions.ts",
+          "sha256": "d6431a6fb14bce44947d0ea4f346154811b5313bc760d450702db61f2b9302e2"
+        },
+        {
+          "target": "lib/buildpad/hooks/useDaaSContext.tsx",
+          "sha256": "a22df6b4927fd590ffd54b5eb8f526f346803adc715cddc7c68bc137a2eb6a1e"
+        },
+        {
+          "target": "lib/buildpad/hooks/index.ts",
+          "sha256": "719e03a0756fba4e4d3de46fbaf517f124187f904d8099c1d0dba144dd6da291"
+        }
+      ]
+    },
+    "utils": {
+      "version": "1.0.0",
+      "sourcePackage": "@buildpad/cli",
+      "installedAt": "2026-05-26T13:57:02.625Z",
+      "files": [
+        {
+          "target": "lib/buildpad/common-utils.ts",
+          "sha256": "775bef3e1a304ea0119d401969afe24854dc660586a98e92173b55395e6fe436"
+        },
+        {
+          "target": "lib/buildpad/field-interface-mapper.ts",
+          "sha256": "19cb8f9bf4c0e9468775cbd66cfe343a1e07023e1247779e1c6ab4ba9cc01c2f"
+        },
+        {
+          "target": "lib/buildpad/interface-types.ts",
+          "sha256": "1a6e914292ca576bc52219c1c53c2368a448ba2f95611a73a3d4fd5caa5508f9"
+        },
+        {
+          "target": "lib/buildpad/define-interface.ts",
+          "sha256": "a41623f3b4691b8e563d7831d60fa0a29d65dbd981e2c4d046cf82714dbc5909"
+        },
+        {
+          "target": "lib/buildpad/interface-registry.ts",
+          "sha256": "85303a48aceb704e67a9d2de14ce2c9cd8e2f65a51146dacbd9fcb0dd99b11a3"
+        },
+        {
+          "target": "lib/buildpad/is-new-item.ts",
+          "sha256": "0574e3cc85110d9fc229974fc00ce5b5e27637e7c2ff06f215caa05c9e5e667c"
+        },
+        {
+          "target": "lib/buildpad/utils/index.ts",
+          "sha256": "b2ac0fb330c5772219134a1852613d0652249b89ad093635efcb5a121a8e1646"
+        },
+        {
+          "target": "lib/buildpad/utils.ts",
+          "sha256": "6f343edb3742106a402c9e73eb9c9fa0d5a398cccca7774fa95679f63ebc7424"
+        },
+        {
+          "target": "types/modules.d.ts",
+          "sha256": "ed4bc8b049b79bfab2a006d8734758d2b8fea8df87c40c5c57892523fa432da2"
+        }
+      ]
+    }
+  },
+  "packageVersions": {
+    "@buildpad/cli": "1.0.0",
+    "@buildpad/ui-interfaces": "0.2.0",
+    "@buildpad/types": "0.2.0",
+    "@buildpad/services": "0.2.0",
+    "@buildpad/hooks": "0.2.0",
+    "@buildpad/ui-table": "0.2.0",
+    "@buildpad/ui-collections": "0.2.0",
+    "@buildpad/ui-form": "0.2.0"
+  },
+  "componentVersions": {
+    "input": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:37.344Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "textarea": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:37.749Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "input-code": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:38.181Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "input-hash": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:38.899Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "system-token": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:54.620Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "system-permissions": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:55.312Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "input-block-editor": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:56.354Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "tags": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:56.797Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "select-dropdown": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:57.127Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "select-radio": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:57.451Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "select-multiple-checkbox": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:57.793Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "select-multiple-checkbox-tree": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:58.188Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "select-multiple-dropdown": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:58.555Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "select-icon": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:59.025Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "autocomplete-api": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:56:59.426Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "boolean": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:02.968Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "toggle": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:03.340Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "datetime": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:03.713Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "color": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:04.064Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "slider": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:04.546Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "upload": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:05.171Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "file": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:05.504Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "file-image": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:05.863Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "files": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:06.206Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "vtable": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:08.598Z",
+      "source": "@buildpad/ui-table"
+    },
+    "filter-panel": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:08.934Z",
+      "source": "@buildpad/ui-collections"
+    },
+    "collection-list": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:10.999Z",
+      "source": "@buildpad/ui-collections"
+    },
+    "list-m2m": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:12.058Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "select-dropdown-m2o": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:12.733Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "list-o2m": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:13.104Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "divider": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:13.439Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "notice": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:13.770Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "group-detail": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:14.147Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "group-accordion": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:14.501Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "group-raw": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:14.863Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "rich-text-html": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:15.592Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "rich-text-markdown": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:16.328Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "map": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:16.702Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "workflow-button": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:18.314Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "vform": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:25.086Z",
+      "source": "@buildpad/ui-form"
+    },
+    "save-options": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:25.500Z",
+      "source": "@buildpad/ui-collections"
+    },
+    "collection-form": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:25.858Z",
+      "source": "@buildpad/ui-collections"
+    },
+    "list-m2a": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:26.893Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "collection-item-dropdown": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:27.342Z",
+      "source": "@buildpad/ui-interfaces"
+    },
+    "content-navigation": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:27.727Z",
+      "source": "@buildpad/ui-collections"
+    },
+    "content-layout": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:28.118Z",
+      "source": "@buildpad/ui-collections"
+    },
+    "map-with-real-map": {
+      "version": "0.2.0",
+      "installedAt": "2026-05-26T13:57:28.561Z",
+      "source": "@buildpad/ui-interfaces"
+    }
+  },
+  "registryVersion": "1.0.0"
+}

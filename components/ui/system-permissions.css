@@ -1,0 +1,19 @@
+/**
+ * @buildpad-origin @buildpad/ui-interfaces/system-permissions
+ * @buildpad-version 0.2.0
+ *
+ * This file was copied from Buildpad UI Packages.
+ * To update, run: npx @buildpad/cli add system-permissions --overwrite
+ *
+ * Docs: https://buildpad.dev/components/system-permissions
+ */
+
+/* SystemPermissions — minimal styles (most UI via Mantine components) */
+
+.hover-highlight:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+[data-mantine-color-scheme="dark"] .hover-highlight:hover {
+  background-color: var(--mantine-color-dark-5);
+}

@@ -1,0 +1,87 @@
+/**
+ * @buildpad-origin @buildpad/ui-interfaces/rich-text-html
+ * @buildpad-version 0.2.0
+ *
+ * This file was copied from Buildpad UI Packages.
+ * To update, run: npx @buildpad/cli add rich-text-html --overwrite
+ *
+ * Docs: https://buildpad.dev/components/rich-text-html
+ */
+
+.rich-text-html-wrapper {
+  position: relative;
+}
+
+/* Ensure the ProseMirror editable area has a visible min-height.
+   Without this, the content area can collapse to 0px when the editor
+   initialises inside a container that was previously hidden (e.g.
+   accordion sections using display:none toggling). */
+.rich-text-html-wrapper .ProseMirror {
+  min-height: 120px;
+}
+
+/* Also target the Mantine wrapper around ProseMirror */
+.rich-text-html-wrapper .mantine-RichTextEditor-content {
+  min-height: 120px;
+}
+
+/* Ensure the editor has a visible background when mounted inside containers
+   that may not inherit a background (e.g. accordion sections). */
+.rich-text-html-wrapper .ProseMirror:focus,
+.rich-text-html-wrapper .ProseMirror {
+  background-color: var(--mantine-color-body, #fff);
+}
+
+.rich-text-html-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.rich-text-html-label--error {
+  color: var(--mantine-color-error);
+}
+
+.rich-text-html-required {
+  color: var(--mantine-color-error);
+}
+
+.rich-text-html-loading {
+  min-height: 120px;
+  border: 1px solid var(--mantine-color-gray-4);
+  border-radius: var(--mantine-radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--mantine-color-gray-0);
+}
+
+.rich-text-html-editor--error {
+  border: 1px solid var(--mantine-color-error);
+}
+
+.rich-text-html-char-count {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.rich-text-html-char-count--normal {
+  color: var(--mantine-color-gray-6);
+}
+
+.rich-text-html-char-count--near-limit {
+  color: var(--mantine-color-orange-6);
+}
+
+.rich-text-html-char-count--over-limit {
+  color: var(--mantine-color-red-6);
+}
+
+.rich-text-html-error-message {
+  font-size: 12px;
+  color: var(--mantine-color-error);
+  margin-top: 4px;
+}

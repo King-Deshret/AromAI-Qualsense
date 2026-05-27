@@ -1,0 +1,15 @@
+/**
+ * @buildpad-origin @buildpad/ui-interfaces/input-hash
+ * @buildpad-version 0.2.0
+ *
+ * This file was copied from Buildpad UI Packages.
+ * To update, run: npx @buildpad/cli add input-hash --overwrite
+ *
+ * Docs: https://buildpad.dev/components/input-hash
+ */
+
+/* Match Directus: placeholder text in primary color when a hash value is stored */
+.input-hash-hashed::placeholder {
+  color: var(--mantine-primary-color-6, var(--ds-primary, #e35b2a)) !important;
+  opacity: 1;
+}

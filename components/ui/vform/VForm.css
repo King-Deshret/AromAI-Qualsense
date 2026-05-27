@@ -1,0 +1,63 @@
+/**
+ * @buildpad-origin @buildpad/ui-form/vform
+ * @buildpad-version 0.2.0
+ *
+ * This file was copied from Buildpad UI Packages.
+ * To update, run: npx @buildpad/cli add vform --overwrite
+ *
+ * Docs: https://buildpad.dev/components/vform
+ */
+
+/**
+ * VForm Styles
+ * Based on DaaS v-form styles
+ * Field layout is controlled entirely by field configuration (meta.width),
+ * no responsive breakpoints — the form always respects the data model layout.
+ */
+
+.v-form {
+  width: 100%;
+}
+
+/* Form Grid Layout — always two-column */
+.form-grid {
+  display: grid;
+  grid-template-columns: [start] minmax(0, 1fr) [half] minmax(0, 1fr) [full];
+  gap: var(--mantine-spacing-md, 16px);
+  width: 100%;
+}
+
+/* Field Width Classes */
+.form-field.field-width-full,
+.form-field.field-width-fill {
+  grid-column: start / full;
+}
+
+.form-field.field-width-half,
+.form-field.field-width-half-left {
+  grid-column: start / half;
+}
+
+.form-field.field-width-half-right {
+  grid-column: half / full;
+}
+
+/* Field States */
+.form-field[data-edited="true"] {
+  /* Visual indicator for edited fields — subtle left border */
+  border-left: 2px solid var(--mantine-primary-color-5, var(--ds-primary, #e35b2a));
+  padding-left: var(--mantine-spacing-xs, 8px);
+}
+
+.form-field.invalid,
+.form-field[data-invalid="true"] {
+  /* Visual indicator for validation errors */
+  border-left: 2px solid var(--mantine-color-red-6, #fa5252);
+  padding-left: var(--mantine-spacing-xs, 8px);
+}
+
+/* System Divider */
+.form-field[data-field="system-divider"] {
+  grid-column: start / full;
+  margin: var(--mantine-spacing-md, 16px) 0;
+}

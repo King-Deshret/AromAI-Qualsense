@@ -1,0 +1,40 @@
+/**
+ * @buildpad-origin @buildpad/ui-form/vform
+ * @buildpad-version 0.2.0
+ *
+ * This file was copied from Buildpad UI Packages.
+ * To update, run: npx @buildpad/cli add vform --overwrite
+ *
+ * Docs: https://buildpad.dev/components/vform
+ */
+
+/**
+ * VForm - Dynamic Form Component
+ * 
+ * Re-exports VForm and related components.
+ * This file is copied to your project and can be customized.
+ * 
+ * NOTE: Import paths must match actual file names (PascalCase for VForm folder)
+ */
+
+// Main VForm export - VForm.tsx uses PascalCase filename
+export { VForm } from './VForm';
+export type { VFormProps, FormAction } from './VForm';
+
+// Component exports - files in components/ use PascalCase
+export { FormField } from './components/FormField';
+export type { FormFieldProps } from './components/FormField';
+
+export { FormFieldLabel } from './components/FormFieldLabel';
+
+export { FormFieldInterface } from './components/FormFieldInterface';
+export type { FormFieldInterfaceProps } from './components/FormFieldInterface';
+
+export { FormGroupField } from './components/FormGroupField';
+export type { FormGroupFieldProps } from './components/FormGroupField';
+
+export { ValidationErrors } from './components/ValidationErrors';
+export type { ValidationErrorsProps } from './components/ValidationErrors';
+
+export * from './types';
+export * from './utils';
