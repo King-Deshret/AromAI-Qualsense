@@ -91,8 +91,12 @@ export async function POST(request: NextRequest) {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
+      console.error('Missing env vars:', {
+        hasSupabaseUrl: !!supabaseUrl,
+        hasServiceRoleKey: !!serviceRoleKey,
+      });
       return NextResponse.json(
-        { errors: [{ message: 'Server configuration error.' }] },
+        { errors: [{ message: `Konfigurasi server tidak lengkap. Hubungi administrator. (missing: ${!supabaseUrl ? 'SUPABASE_URL ' : ''}${!serviceRoleKey ? 'SERVICE_ROLE_KEY' : ''})` }] },
         { status: 500 }
       );
     }
