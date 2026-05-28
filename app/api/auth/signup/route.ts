@@ -136,15 +136,15 @@ export async function POST(request: NextRequest) {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    // Create user — email_confirm: false so Supabase sends verification email
+    // Create user — email_confirm: true (auto-confirm since SMTP may not be configured)
     const { data: createData, error: createError } = await adminClient.auth.admin.createUser({
       email: email.trim().toLowerCase(),
       password,
-      email_confirm: false, // Require email verification
+      email_confirm: true,
       user_metadata: {
         first_name: firstName?.trim() || '',
         last_name: lastName?.trim() || '',
-        role: selectedRole, // Store role in metadata for login redirect
+        role: selectedRole,
       },
     });
 
@@ -205,8 +205,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       data: {
-        message: 'Akun berhasil dibuat. Cek email kamu untuk verifikasi.',
-        requiresVerification: true,
+        message: 'Akun berhasil dibuat. Silakan login.',
+        requiresVerification: false,
       },
     });
   } catch (err) {

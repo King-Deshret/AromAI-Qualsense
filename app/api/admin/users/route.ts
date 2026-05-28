@@ -35,45 +35,32 @@ async function requireAdmin(): Promise<{ id: string; email: string | undefined }
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) return null;
 
-    // Use service role key to look up the user's roles in DaaS
-    // (the user's own JWT doesn't include role info in /api/users/me response)
-    const daasUrl = getDaasUrl();
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (!serviceRoleKey) return null;
 
+    const daasUrl = getDaasUrl();
     const headers = {
       'Authorization': `Bearer ${serviceRoleKey}`,
       'Content-Type': 'application/json',
     };
 
-    // Fetch user's role assignments from DaaS using service role
-    const userRes = await fetch(
-      `${daasUrl}/api/users/${user.id}?fields[]=id&fields[]=roles`,
-      { headers, cache: 'no-store' }
-    );
-
-    if (userRes.ok) {
-      const userData = await userRes.json();
-      const daasUser = userData.data || userData;
-      const roles: Array<{ id?: string; role?: { id?: string } }> = daasUser.roles || [];
-      const isAdmin = roles.some((r) => {
-        const roleId = r.id || r.role?.id;
-        return roleId === ROLE_IDS.admin;
-      });
-      if (isAdmin) return { id: user.id, email: user.email };
-    }
-
-    // Fallback: check via user_roles junction
+    // Check via user_roles junction table — most reliable approach
     const rolesRes = await fetch(
       `${daasUrl}/api/user_roles?filter[user_id][_eq]=${user.id}&filter[role_id][_eq]=${ROLE_IDS.admin}&limit=1`,
       { headers, cache: 'no-store' }
     );
     if (rolesRes.ok) {
       const rolesData = await rolesRes.json();
-      const entries = rolesData.data || rolesData;
-      if (Array.isArray(entries) && entries.length > 0) {
+      const entries = Array.isArray(rolesData.data) ? rolesData.data : (Array.isArray(rolesData) ? rolesData : []);
+      if (entries.length > 0) {
         return { id: user.id, email: user.email };
       }
+    }
+
+    // Fallback: check user metadata role stored during signup/login
+    const userMeta = user.user_metadata || {};
+    if (userMeta.role === 'admin') {
+      return { id: user.id, email: user.email };
     }
 
     return null;

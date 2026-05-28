@@ -55,9 +55,9 @@ const ROLE_HIERARCHY: Record<UserRole, number> = {
 };
 
 const ROLE_BADGE_COLOR: Record<UserRole, string> = {
-  operator: '#3b82f6',
-  qc_manager: '#8b5cf6',
-  admin: '#f97316',
+  operator: '#2d6b45',
+  qc_manager: '#1a4a2e',
+  admin: '#c9a84c',
 };
 
 const ROLE_LABEL: Record<UserRole, string> = {
@@ -141,10 +141,10 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
           alignItems: 'center',
           justifyContent: 'center',
           height: '100vh',
-          background: '#0f0f1a',
+          background: '#0d2818',
         }}
       >
-        <Loader size="lg" color="orange" />
+        <Loader size="lg" color="#c9a84c" />
       </Box>
     );
   }
@@ -161,17 +161,17 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
       navbar={{ width: 240, breakpoint: 'sm' }}
       padding="md"
       styles={{
-        root: { background: '#0f0f1a' },
-        main: { background: '#0f0f1a', color: '#fff' },
+        root: { background: '#0d2818' },
+        main: { background: '#0d2818', color: '#fff' },
       }}
     >
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <AppShell.Header
         style={{
-          background: 'rgba(26, 26, 46, 0.95)',
+          background: 'rgba(13, 40, 24, 0.97)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+          borderBottom: '1px solid rgba(201, 168, 76, 0.15)',
         }}
       >
         <Group h="100%" px="md" justify="space-between">
@@ -182,14 +182,14 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
                 width: 32,
                 height: 32,
                 borderRadius: 8,
-                background: 'rgba(249, 115, 22, 0.15)',
-                border: '1px solid rgba(249, 115, 22, 0.3)',
+                background: 'rgba(201, 168, 76, 0.15)',
+                border: '1px solid rgba(201, 168, 76, 0.4)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: 12, fontWeight: 900, color: '#f97316', fontStyle: 'italic' }}>
+              <Text style={{ fontSize: 12, fontWeight: 900, color: '#c9a84c', fontStyle: 'italic' }}>
                 AQ
               </Text>
             </Box>
@@ -232,14 +232,14 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
                       width: 28,
                       height: 28,
                       borderRadius: '50%',
-                      background: 'rgba(249, 115, 22, 0.2)',
-                      border: '1px solid rgba(249, 115, 22, 0.4)',
+                      background: 'rgba(201, 168, 76, 0.2)',
+                      border: '1px solid rgba(201, 168, 76, 0.4)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
                   >
-                    <IconUser size={14} color="#f97316" />
+                    <IconUser size={14} color="#c9a84c" />
                   </Box>
                   <Box>
                     <Text size="xs" fw={600} style={{ color: '#fff', lineHeight: 1.2 }}>
@@ -257,8 +257,8 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
 
               <Menu.Dropdown
                 style={{
-                  background: '#1a1a2e',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: '#0d2818',
+                  border: '1px solid rgba(201, 168, 76, 0.2)',
                   boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
                 }}
               >
@@ -299,10 +299,10 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
       <AppShell.Navbar
         p="xs"
         style={{
-          background: 'rgba(22, 33, 62, 0.95)',
+          background: 'rgba(13, 40, 24, 0.97)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderRight: '1px solid rgba(255, 255, 255, 0.06)',
+          borderRight: '1px solid rgba(201, 168, 76, 0.1)',
         }}
       >
         <Stack gap={2}>
@@ -324,17 +324,17 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
                   cursor: 'pointer',
                   position: 'relative',
                   background: isActive
-                    ? 'rgba(249, 115, 22, 0.12)'
+                    ? 'rgba(201, 168, 76, 0.12)'
                     : 'transparent',
                   borderLeft: isActive
-                    ? '3px solid #f97316'
+                    ? '3px solid #c9a84c'
                     : '3px solid transparent',
                   transition: 'all 0.15s ease',
                 }}
               >
                 <Box
                   style={{
-                    color: isActive ? '#f97316' : 'rgba(255,255,255,0.45)',
+                    color: isActive ? '#c9a84c' : 'rgba(255,255,255,0.45)',
                     display: 'flex',
                     alignItems: 'center',
                     flexShrink: 0,

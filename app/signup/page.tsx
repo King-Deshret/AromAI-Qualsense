@@ -103,6 +103,8 @@ export default function SignupPage() {
       }
 
       setSubmitted(true);
+      // Auto-redirect to login after 2 seconds
+      setTimeout(() => { window.location.href = '/login'; }, 2000);
     } catch {
       setError('Terjadi kesalahan jaringan. Coba lagi.');
     } finally {
@@ -120,7 +122,7 @@ export default function SignupPage() {
           <Paper style={cardStyle} p={40} radius="lg">
             <Stack align="center" gap="lg">
               <Box style={iconCircleStyle}>
-                <IconMailCheck size={32} color="#f97316" />
+                <IconMailCheck size={32} color="#c9a84c" />
               </Box>
               <Title
                 order={3}
@@ -145,7 +147,7 @@ export default function SignupPage() {
               <Anchor
                 href="/login"
                 size="sm"
-                style={{ color: '#f97316', fontWeight: 600 }}
+                style={{ color: '#c9a84c', fontWeight: 600 }}
               >
                 Kembali ke halaman login
               </Anchor>
@@ -165,7 +167,7 @@ export default function SignupPage() {
         {/* Brand */}
         <Stack align="center" mb="xl" gap={4}>
           <Box style={logoStyle}>
-            <Text style={{ fontSize: 22, fontWeight: 900, color: '#f97316', fontStyle: 'italic' }}>
+            <Text style={{ fontSize: 22, fontWeight: 900, color: '#c9a84c', fontStyle: 'italic' }}>
               AQ
             </Text>
           </Box>
@@ -269,10 +271,10 @@ export default function SignupPage() {
                             borderRadius: 10,
                             cursor: 'pointer',
                             border: isSelected
-                              ? '1px solid rgba(249, 115, 22, 0.6)'
+                              ? '1px solid rgba(201, 168, 76, 0.6)'
                               : '1px solid rgba(255, 255, 255, 0.08)',
                             background: isSelected
-                              ? 'rgba(249, 115, 22, 0.1)'
+                              ? 'rgba(201, 168, 76, 0.1)'
                               : 'rgba(255, 255, 255, 0.03)',
                             transition: 'all 0.15s ease',
                           }}
@@ -286,9 +288,9 @@ export default function SignupPage() {
                               alignItems: 'center',
                               justifyContent: 'center',
                               background: isSelected
-                                ? 'rgba(249, 115, 22, 0.2)'
+                                ? 'rgba(201, 168, 76, 0.2)'
                                 : 'rgba(255, 255, 255, 0.06)',
-                              color: isSelected ? '#f97316' : 'rgba(255,255,255,0.5)',
+                              color: isSelected ? '#c9a84c' : 'rgba(255,255,255,0.5)',
                               flexShrink: 0,
                             }}
                           >
@@ -318,9 +320,9 @@ export default function SignupPage() {
                               height: 16,
                               borderRadius: '50%',
                               border: isSelected
-                                ? '2px solid #f97316'
+                                ? '2px solid #c9a84c'
                                 : '2px solid rgba(255,255,255,0.2)',
-                              background: isSelected ? '#f97316' : 'transparent',
+                              background: isSelected ? '#c9a84c' : 'transparent',
                               flexShrink: 0,
                               transition: 'all 0.15s ease',
                             }}
@@ -354,7 +356,7 @@ export default function SignupPage() {
 
                 <Text ta="center" size="sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
                   Sudah punya akun?{' '}
-                  <Anchor href="/login" size="sm" style={{ color: '#f97316', fontWeight: 600 }}>
+                  <Anchor href="/login" size="sm" style={{ color: '#c9a84c', fontWeight: 600 }}>
                     Masuk
                   </Anchor>
                 </Text>
@@ -367,7 +369,7 @@ export default function SignupPage() {
   );
 }
 
-/* ─── Styles ─────────────────────────────────────────────────────────────── */
+/* ─── Styles — Sima Arôme palette ────────────────────────────────────────── */
 
 const pageStyle: React.CSSProperties = {
   position: 'fixed',
@@ -375,16 +377,16 @@ const pageStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%)',
+  background: 'linear-gradient(135deg, #0d2818 0%, #1a4a2e 50%, #0f3320 100%)',
   overflow: 'hidden',
   overflowY: 'auto',
 };
 
 const cardStyle: React.CSSProperties = {
-  background: 'rgba(255, 255, 255, 0.04)',
+  background: 'rgba(255, 255, 255, 0.05)',
   backdropFilter: 'blur(20px)',
   WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(255, 255, 255, 0.08)',
+  border: '1px solid rgba(201, 168, 76, 0.2)',
   boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
 };
 
@@ -392,17 +394,17 @@ const logoStyle: React.CSSProperties = {
   width: 56,
   height: 56,
   borderRadius: 14,
-  background: 'rgba(249, 115, 22, 0.15)',
-  border: '1px solid rgba(249, 115, 22, 0.3)',
+  background: 'rgba(201, 168, 76, 0.15)',
+  border: '1px solid rgba(201, 168, 76, 0.4)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 };
 
 const primaryBtnStyle: React.CSSProperties = {
-  background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-  border: 'none',
-  boxShadow: '0 4px 20px rgba(249, 115, 22, 0.4)',
+  background: 'linear-gradient(135deg, #1a4a2e 0%, #2d6b45 100%)',
+  border: '1px solid rgba(201, 168, 76, 0.4)',
+  boxShadow: '0 4px 20px rgba(26, 74, 46, 0.5)',
   height: 44,
 };
 
@@ -420,8 +422,8 @@ const iconCircleStyle: React.CSSProperties = {
   width: 64,
   height: 64,
   borderRadius: '50%',
-  background: 'rgba(249, 115, 22, 0.12)',
-  border: '1px solid rgba(249, 115, 22, 0.25)',
+  background: 'rgba(201, 168, 76, 0.12)',
+  border: '1px solid rgba(201, 168, 76, 0.3)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -434,7 +436,7 @@ const blobTopRight: React.CSSProperties = {
   width: 400,
   height: 400,
   borderRadius: '50%',
-  background: 'radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%)',
+  background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)',
   pointerEvents: 'none',
 };
 
@@ -445,6 +447,6 @@ const blobBottomLeft: React.CSSProperties = {
   width: 500,
   height: 500,
   borderRadius: '50%',
-  background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)',
+  background: 'radial-gradient(circle, rgba(45,107,69,0.2) 0%, transparent 70%)',
   pointerEvents: 'none',
 };

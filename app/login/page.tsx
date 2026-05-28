@@ -147,7 +147,7 @@ export default function LoginPage() {
         {/* Logo / brand mark */}
         <Stack align="center" mb="xl" gap={4}>
           <Box style={logoStyle}>
-            <Text style={{ fontSize: 22, fontWeight: 900, color: '#f97316', fontStyle: 'italic' }}>
+            <Text style={{ fontSize: 22, fontWeight: 900, color: '#c9a84c', fontStyle: 'italic' }}>
               AQ
             </Text>
           </Box>
@@ -234,7 +234,7 @@ export default function LoginPage() {
                 <Anchor
                   href="/signup"
                   size="sm"
-                  style={{ color: '#f97316', fontWeight: 600 }}
+                  style={{ color: '#c9a84c', fontWeight: 600 }}
                 >
                   Daftar sekarang
                 </Anchor>
@@ -247,7 +247,11 @@ export default function LoginPage() {
   );
 }
 
-/* ─── Styles ─────────────────────────────────────────────────────────────── */
+/* ─── Styles — Sima Arôme palette ────────────────────────────────────────── */
+// Primary: dark forest green #1a4a2e
+// Accent:  gold #c9a84c
+// Background: deep green-black #0d2818
+// Card: semi-transparent green-tinted glass
 
 const pageStyle: React.CSSProperties = {
   position: 'fixed',
@@ -255,15 +259,15 @@ const pageStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%)',
+  background: 'linear-gradient(135deg, #0d2818 0%, #1a4a2e 50%, #0f3320 100%)',
   overflow: 'hidden',
 };
 
 const cardStyle: React.CSSProperties = {
-  background: 'rgba(255, 255, 255, 0.04)',
+  background: 'rgba(255, 255, 255, 0.05)',
   backdropFilter: 'blur(20px)',
   WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(255, 255, 255, 0.08)',
+  border: '1px solid rgba(201, 168, 76, 0.2)',
   boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
 };
 
@@ -271,23 +275,23 @@ const logoStyle: React.CSSProperties = {
   width: 56,
   height: 56,
   borderRadius: 14,
-  background: 'rgba(249, 115, 22, 0.15)',
-  border: '1px solid rgba(249, 115, 22, 0.3)',
+  background: 'rgba(201, 168, 76, 0.15)',
+  border: '1px solid rgba(201, 168, 76, 0.4)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 };
 
 const primaryBtnStyle: React.CSSProperties = {
-  background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-  border: 'none',
-  boxShadow: '0 4px 20px rgba(249, 115, 22, 0.4)',
+  background: 'linear-gradient(135deg, #1a4a2e 0%, #2d6b45 100%)',
+  border: '1px solid rgba(201, 168, 76, 0.4)',
+  boxShadow: '0 4px 20px rgba(26, 74, 46, 0.5)',
   height: 44,
 };
 
 const secondaryBtnStyle: React.CSSProperties = {
   background: 'rgba(255,255,255,0.06)',
-  border: '1px solid rgba(255,255,255,0.1)',
+  border: '1px solid rgba(201, 168, 76, 0.2)',
   color: '#fff',
 };
 
@@ -305,8 +309,8 @@ const iconCircleStyle: React.CSSProperties = {
   width: 64,
   height: 64,
   borderRadius: '50%',
-  background: 'rgba(249, 115, 22, 0.12)',
-  border: '1px solid rgba(249, 115, 22, 0.25)',
+  background: 'rgba(201, 168, 76, 0.12)',
+  border: '1px solid rgba(201, 168, 76, 0.3)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -319,7 +323,7 @@ const blobTopRight: React.CSSProperties = {
   width: 400,
   height: 400,
   borderRadius: '50%',
-  background: 'radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%)',
+  background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)',
   pointerEvents: 'none',
 };
 
@@ -330,6 +334,6 @@ const blobBottomLeft: React.CSSProperties = {
   width: 500,
   height: 500,
   borderRadius: '50%',
-  background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)',
+  background: 'radial-gradient(circle, rgba(45,107,69,0.2) 0%, transparent 70%)',
   pointerEvents: 'none',
 };
