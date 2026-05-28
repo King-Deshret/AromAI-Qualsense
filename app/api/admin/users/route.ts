@@ -35,33 +35,48 @@ async function requireAdmin(): Promise<{ id: string; email: string | undefined }
     const { data: { user }, error } = await supabase.auth.getUser();
     if (error || !user) return null;
 
-    // Check DaaS for admin role
+    // Use service role key to look up the user's roles in DaaS
+    // (the user's own JWT doesn't include role info in /api/users/me response)
     const daasUrl = getDaasUrl();
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.access_token) return null;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!serviceRoleKey) return null;
 
     const headers = {
-      'Authorization': `Bearer ${session.access_token}`,
+      'Authorization': `Bearer ${serviceRoleKey}`,
       'Content-Type': 'application/json',
     };
 
-    const meRes = await fetch(`${daasUrl}/api/users/me`, { headers, cache: 'no-store' });
-    if (!meRes.ok) return null;
+    // Fetch user's role assignments from DaaS using service role
+    const userRes = await fetch(
+      `${daasUrl}/api/users/${user.id}?fields[]=id&fields[]=roles`,
+      { headers, cache: 'no-store' }
+    );
 
-    const meData = await meRes.json();
-    const meUser = meData.data || meData;
+    if (userRes.ok) {
+      const userData = await userRes.json();
+      const daasUser = userData.data || userData;
+      const roles: Array<{ id?: string; role?: { id?: string } }> = daasUser.roles || [];
+      const isAdmin = roles.some((r) => {
+        const roleId = r.id || r.role?.id;
+        return roleId === ROLE_IDS.admin;
+      });
+      if (isAdmin) return { id: user.id, email: user.email };
+    }
 
-    // Check if user has admin role
-    const roles: Array<{ id?: string; role?: { id?: string } }> = meUser.roles || [];
-    const isAdmin = roles.some((r) => {
-      const roleId = r.id || r.role?.id;
-      return roleId === ROLE_IDS.admin;
-    });
+    // Fallback: check via user_roles junction
+    const rolesRes = await fetch(
+      `${daasUrl}/api/user_roles?filter[user_id][_eq]=${user.id}&filter[role_id][_eq]=${ROLE_IDS.admin}&limit=1`,
+      { headers, cache: 'no-store' }
+    );
+    if (rolesRes.ok) {
+      const rolesData = await rolesRes.json();
+      const entries = rolesData.data || rolesData;
+      if (Array.isArray(entries) && entries.length > 0) {
+        return { id: user.id, email: user.email };
+      }
+    }
 
-    // Also accept admin_access flag
-    if (!isAdmin && !meUser.admin_access) return null;
-
-    return { id: user.id, email: user.email };
+    return null;
   } catch {
     return null;
   }

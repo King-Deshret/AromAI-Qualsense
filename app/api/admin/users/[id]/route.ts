@@ -38,36 +38,42 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       );
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.access_token) {
+    const daasUrl = getDaasUrl();
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!serviceRoleKey) {
       return NextResponse.json(
-        { errors: [{ message: 'Authentication required' }] },
-        { status: 401 }
+        { errors: [{ message: 'Server configuration error' }] },
+        { status: 500 }
       );
     }
 
-    const daasUrl = getDaasUrl();
-    const userHeaders = {
-      'Authorization': `Bearer ${session.access_token}`,
+    const daasServiceHeaders = {
+      'Authorization': `Bearer ${serviceRoleKey}`,
       'Content-Type': 'application/json',
     };
 
-    // Verify admin role via DaaS
-    const meRes = await fetch(`${daasUrl}/api/users/me`, { headers: userHeaders, cache: 'no-store' });
-    if (!meRes.ok) {
-      return NextResponse.json(
-        { errors: [{ message: 'Admin access required' }] },
-        { status: 403 }
+    // Verify admin role using service role key
+    let isAdmin = false;
+    try {
+      const userRes = await fetch(
+        `${daasUrl}/api/users/${currentUser.id}?fields[]=id&fields[]=roles`,
+        { headers: daasServiceHeaders, cache: 'no-store' }
       );
+      if (userRes.ok) {
+        const userData = await userRes.json();
+        const daasUser = userData.data || userData;
+        const roles: Array<{ id?: string; role?: { id?: string } }> = daasUser.roles || [];
+        isAdmin = roles.some((r) => {
+          const roleId = r.id || r.role?.id;
+          return roleId === ROLE_IDS.admin;
+        });
+      }
+    } catch {
+      // ignore
     }
-    const meData = await meRes.json();
-    const meUser = meData.data || meData;
-    const roles: Array<{ id?: string; role?: { id?: string } }> = meUser.roles || [];
-    const isAdmin = roles.some((r) => {
-      const roleId = r.id || r.role?.id;
-      return roleId === ROLE_IDS.admin;
-    });
-    if (!isAdmin && !meUser.admin_access) {
+
+    if (!isAdmin) {
       return NextResponse.json(
         { errors: [{ message: 'Admin access required' }] },
         { status: 403 }
@@ -82,9 +88,8 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     };
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!supabaseUrl || !serviceRoleKey) {
+    if (!supabaseUrl) {
       return NextResponse.json(
         { errors: [{ message: 'Server configuration error' }] },
         { status: 500 }
@@ -95,10 +100,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    const daasHeaders = {
-      'Authorization': `Bearer ${serviceRoleKey}`,
-      'Content-Type': 'application/json',
-    };
+    const daasHeaders = daasServiceHeaders;
 
     // Update Supabase user metadata if name changed
     if (first_name !== undefined) {
