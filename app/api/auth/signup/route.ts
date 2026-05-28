@@ -1,65 +1,156 @@
 /**
  * Auth Signup API Route
  *
- * Creates a new user account via Supabase Admin API (bypasses email confirmation)
- * and assigns the OPERATOR role in DaaS. All new signups default to OPERATOR role.
+ * Flow per diagram:
+ * 1. Check admin slot availability (count users with admin role)
+ * 2. If admin slots available → allow Admin/Manager/Operator role choice
+ * 3. If admin slots full → only Manager/Operator
+ * 4. Create user with email_confirm: false → Supabase sends verification email
+ * 5. Store role in user_metadata for login redirect
+ *
+ * GET  /api/auth/signup  — Check admin slot availability
+ * POST /api/auth/signup  — Create new user account
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
-import { createClient } from '@/lib/supabase/server';
 import { getDaasUrl } from '@/lib/api/auth-headers';
 
-// Operator role ID — set OPERATOR_ROLE_ID in .env.local, or it will be fetched by name from DaaS
-const OPERATOR_ROLE_ID_FALLBACK = process.env.OPERATOR_ROLE_ID ?? null;
+const ROLE_IDS: Record<string, string> = {
+  operator: '36d2468d-c436-45c9-9576-7c489ad8ee15',
+  qc_manager: 'ac071131-8041-4aac-9dcc-152fda9afec8',
+  admin: '23c23016-1986-4f03-a62d-1d45bf5a991d',
+};
 
+/** Max number of admin accounts allowed */
+const MAX_ADMIN_SLOTS = 3;
+
+/**
+ * GET /api/auth/signup
+ * Returns whether admin role is available for signup.
+ */
+export async function GET() {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      return NextResponse.json({ adminAvailable: false });
+    }
+
+    const daasUrl = getDaasUrl();
+    const headers = {
+      'Authorization': `Bearer ${serviceRoleKey}`,
+      'Content-Type': 'application/json',
+    };
+
+    // Count users with admin role in DaaS
+    const res = await fetch(
+      `${daasUrl}/api/user_roles?filter[role_id][_eq]=${ROLE_IDS.admin}&meta=total_count&limit=0`,
+      { headers, cache: 'no-store' }
+    );
+
+    if (res.ok) {
+      const data = await res.json();
+      const adminCount = data.meta?.total_count ?? 0;
+      return NextResponse.json({ adminAvailable: adminCount < MAX_ADMIN_SLOTS });
+    }
+
+    return NextResponse.json({ adminAvailable: false });
+  } catch {
+    return NextResponse.json({ adminAvailable: false });
+  }
+}
+
+/**
+ * POST /api/auth/signup
+ * Creates a new user. Sends email verification automatically.
+ */
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, firstName, lastName } = await request.json();
+    const { email, password, firstName, lastName, role } = await request.json();
 
     if (!email || !password) {
       return NextResponse.json(
-        { errors: [{ message: 'Email and password are required' }] },
+        { errors: [{ message: 'Email dan password wajib diisi.' }] },
         { status: 400 }
       );
     }
 
     if (password.length < 6) {
       return NextResponse.json(
-        { errors: [{ message: 'Password must be at least 6 characters' }] },
+        { errors: [{ message: 'Password minimal 6 karakter.' }] },
         { status: 400 }
       );
     }
+
+    const validRoles = ['operator', 'qc_manager', 'admin'];
+    const selectedRole = validRoles.includes(role) ? role : 'operator';
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
       return NextResponse.json(
-        { errors: [{ message: 'Server configuration error' }] },
+        { errors: [{ message: 'Server configuration error.' }] },
         { status: 500 }
       );
     }
 
-    // Use admin client to create user (bypasses email confirmation)
+    // If admin role requested, verify slot is still available
+    if (selectedRole === 'admin') {
+      const daasUrl = getDaasUrl();
+      const daasHeaders = {
+        'Authorization': `Bearer ${serviceRoleKey}`,
+        'Content-Type': 'application/json',
+      };
+      try {
+        const countRes = await fetch(
+          `${daasUrl}/api/user_roles?filter[role_id][_eq]=${ROLE_IDS.admin}&meta=total_count&limit=0`,
+          { headers: daasHeaders, cache: 'no-store' }
+        );
+        if (countRes.ok) {
+          const countData = await countRes.json();
+          const adminCount = countData.meta?.total_count ?? 0;
+          if (adminCount >= MAX_ADMIN_SLOTS) {
+            return NextResponse.json(
+              { errors: [{ message: 'Slot admin sudah penuh. Pilih role Manager atau Operator.' }] },
+              { status: 409 }
+            );
+          }
+        }
+      } catch {
+        // If check fails, deny admin signup for safety
+        return NextResponse.json(
+          { errors: [{ message: 'Tidak dapat memverifikasi slot admin. Coba lagi.' }] },
+          { status: 500 }
+        );
+      }
+    }
+
     const adminClient = createAdminClient(supabaseUrl, serviceRoleKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
+    // Create user — email_confirm: false so Supabase sends verification email
     const { data: createData, error: createError } = await adminClient.auth.admin.createUser({
-      email,
+      email: email.trim().toLowerCase(),
       password,
-      email_confirm: true, // Auto-confirm email
+      email_confirm: false, // Require email verification
       user_metadata: {
-        first_name: firstName || '',
-        last_name: lastName || '',
+        first_name: firstName?.trim() || '',
+        last_name: lastName?.trim() || '',
+        role: selectedRole, // Store role in metadata for login redirect
       },
     });
 
     if (createError) {
-      if (createError.message.includes('already been registered') || createError.message.includes('already exists')) {
+      if (
+        createError.message.includes('already been registered') ||
+        createError.message.includes('already exists')
+      ) {
         return NextResponse.json(
-          { errors: [{ message: 'An account with this email already exists. Please sign in.' }] },
+          { errors: [{ message: 'Email sudah terdaftar. Silakan login.' }] },
           { status: 409 }
         );
       }
@@ -71,95 +162,53 @@ export async function POST(request: NextRequest) {
 
     if (!createData.user) {
       return NextResponse.json(
-        { errors: [{ message: 'Failed to create account' }] },
+        { errors: [{ message: 'Gagal membuat akun.' }] },
         { status: 500 }
       );
     }
 
-    // Create user in DaaS and assign operator role
+    // Create user in DaaS and assign role
     try {
       const daasUrl = getDaasUrl();
-      const headers = {
+      const daasHeaders = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${serviceRoleKey}`,
       };
 
-      // Create user in DaaS
       await fetch(`${daasUrl}/api/users`, {
         method: 'POST',
-        headers,
+        headers: daasHeaders,
         body: JSON.stringify({
           id: createData.user.id,
           email: createData.user.email,
-          first_name: firstName || null,
-          last_name: lastName || null,
+          first_name: firstName?.trim() || null,
+          last_name: lastName?.trim() || null,
           status: 'active',
           provider: 'default',
         }),
       });
 
-      // Resolve operator role ID: try env var first, then look up by name from DaaS
-      let operatorRoleId = OPERATOR_ROLE_ID_FALLBACK;
-      if (!operatorRoleId) {
-        try {
-          const rolesRes = await fetch(
-            `${daasUrl}/api/roles?filter[name][_eq]=Operator&limit=1&fields[]=id`,
-            { headers }
-          );
-          if (rolesRes.ok) {
-            const rolesData = await rolesRes.json();
-            const roles = Array.isArray(rolesData.data) ? rolesData.data : rolesData;
-            if (Array.isArray(roles) && roles.length > 0) {
-              operatorRoleId = roles[0].id;
-            }
-          }
-        } catch {
-          // Role lookup failed — user will be created without a role
-        }
-      }
-
-      // Assign operator role
-      if (operatorRoleId) {
+      if (ROLE_IDS[selectedRole]) {
         await fetch(`${daasUrl}/api/users/${createData.user.id}`, {
           method: 'PATCH',
-          headers,
-          body: JSON.stringify({
-            add_roles: [operatorRoleId],
-          }),
+          headers: daasHeaders,
+          body: JSON.stringify({ add_roles: [ROLE_IDS[selectedRole]] }),
         });
       }
     } catch {
-      // DaaS user creation failed — user can still log in
-      console.error('Failed to create DaaS user record');
-    }
-
-    // Sign in the user immediately after signup
-    const supabase = await createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (signInError) {
-      return NextResponse.json({
-        data: { message: 'Account created. Please sign in.' },
-      });
+      console.error('Failed to sync new user to DaaS');
     }
 
     return NextResponse.json({
       data: {
-        user: {
-          id: createData.user.id,
-          email: createData.user.email,
-          role: 'operator',
-        },
-        message: 'Account created successfully',
+        message: 'Akun berhasil dibuat. Cek email kamu untuk verifikasi.',
+        requiresVerification: true,
       },
     });
   } catch (err) {
     console.error('Signup error:', err);
     return NextResponse.json(
-      { errors: [{ message: 'Failed to create account. Please try again.' }] },
+      { errors: [{ message: 'Gagal membuat akun. Coba lagi.' }] },
       { status: 500 }
     );
   }
