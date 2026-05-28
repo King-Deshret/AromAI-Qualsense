@@ -8,6 +8,7 @@ import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 import { Inter } from "next/font/google";
 import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
 import "./design-tokens.css";
 import "./globals.css";
@@ -19,8 +20,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Buildpad App",
-  description: "DaaS-ready Next.js app with a token-based design system"
+  title: "AromAI QC",
+  description: "AI-powered quality control system for aroma raw material inspection"
 };
 
 export default function RootLayout({

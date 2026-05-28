@@ -12,7 +12,7 @@ export interface AiServiceConfig {
   timeoutMs: number;
 }
 
-const DEFAULT_AI_SERVICE_URL = 'https://ai-service.example.com';
+const DEFAULT_AI_SERVICE_URL = process.env.AI_SERVICE_URL ?? 'https://ai-service.example.com';
 const DEFAULT_TIMEOUT_MS = 5000;
 
 /**

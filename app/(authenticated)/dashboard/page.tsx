@@ -203,7 +203,7 @@ export default function DashboardPage() {
           date_created: { _gte: sinceDate },
         },
         fields: ['id', 'status'],
-        limit: -1,
+        limit: 10000,
       });
 
       const lots = lotsResponse.data || [];
@@ -244,7 +244,7 @@ export default function DashboardPage() {
           date_created: { _gte: sinceDate },
         },
         fields: ['id', 'ai_confidence'],
-        limit: -1,
+        limit: 10000,
       });
 
       const inspections = inspectionsResponse.data || [];
@@ -283,7 +283,7 @@ export default function DashboardPage() {
               date_created: { _gte: sinceDate },
             },
             fields: ['id', 'status'],
-            limit: -1,
+            limit: 10000,
           });
 
           const allInspections = allInspectionsResponse.data || [];

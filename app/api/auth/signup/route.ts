@@ -10,8 +10,8 @@ import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { getDaasUrl } from '@/lib/api/auth-headers';
 
-// The operator role ID from DaaS
-const OPERATOR_ROLE_ID = '36d2468d-c436-45c9-9576-7c489ad8ee15';
+// Operator role ID — set OPERATOR_ROLE_ID in .env.local, or it will be fetched by name from DaaS
+const OPERATOR_ROLE_ID_FALLBACK = process.env.OPERATOR_ROLE_ID ?? null;
 
 export async function POST(request: NextRequest) {
   try {
@@ -98,14 +98,36 @@ export async function POST(request: NextRequest) {
         }),
       });
 
+      // Resolve operator role ID: try env var first, then look up by name from DaaS
+      let operatorRoleId = OPERATOR_ROLE_ID_FALLBACK;
+      if (!operatorRoleId) {
+        try {
+          const rolesRes = await fetch(
+            `${daasUrl}/api/roles?filter[name][_eq]=Operator&limit=1&fields[]=id`,
+            { headers }
+          );
+          if (rolesRes.ok) {
+            const rolesData = await rolesRes.json();
+            const roles = Array.isArray(rolesData.data) ? rolesData.data : rolesData;
+            if (Array.isArray(roles) && roles.length > 0) {
+              operatorRoleId = roles[0].id;
+            }
+          }
+        } catch {
+          // Role lookup failed — user will be created without a role
+        }
+      }
+
       // Assign operator role
-      await fetch(`${daasUrl}/api/users/${createData.user.id}`, {
-        method: 'PATCH',
-        headers,
-        body: JSON.stringify({
-          add_roles: [OPERATOR_ROLE_ID],
-        }),
-      });
+      if (operatorRoleId) {
+        await fetch(`${daasUrl}/api/users/${createData.user.id}`, {
+          method: 'PATCH',
+          headers,
+          body: JSON.stringify({
+            add_roles: [operatorRoleId],
+          }),
+        });
+      }
     } catch {
       // DaaS user creation failed — user can still log in
       console.error('Failed to create DaaS user record');

@@ -122,10 +122,11 @@ export default function InspectPage() {
         const lotJson = await lotRes.json();
         const lotData: LotData = lotJson.data ?? lotJson;
 
-        // Parse current user ID from session
+        // Parse current user ID from session — use local var so it's available for inspection creation below
+        let userId: string | null = null;
         if (sessionRes.ok) {
           const sessionJson = await sessionRes.json();
-          const userId = sessionJson.data?.user?.id ?? null;
+          userId = sessionJson.data?.user?.id ?? null;
           setCurrentUserId(userId);
         }
 
@@ -171,7 +172,15 @@ export default function InspectPage() {
 
         setLot(lotData);
 
-        // 4. Create inspection record
+        // 4. Transition lot to QC_IN_PROGRESS before creating inspection
+        await fetch(`/api/items/lots/${lotData.id}`, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'QC_IN_PROGRESS' }),
+        });
+
+        // 5. Create inspection record with inspector_id
         const inspectionType = getInspectionType(lotData.material_type);
         const createRes = await fetch('/api/items/inspections', {
           method: 'POST',
@@ -181,6 +190,7 @@ export default function InspectPage() {
             lot_id: lotData.id,
             inspection_type: inspectionType,
             status: 'PENDING',
+            ...(userId ? { inspector_id: userId } : {}),
           }),
         });
 
