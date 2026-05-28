@@ -3,9 +3,14 @@
 import { useState } from 'react';
 import {
   Paper, Button, Title, Text, Container,
-  Stack, Box, Alert, Anchor,
+  Stack, Box, Anchor,
 } from '@mantine/core';
-import { IconAlertCircle, IconMailCheck } from '@tabler/icons-react';
+import {
+  IconMailCheck,
+  IconMail,
+  IconLock,
+  IconAlertCircle,
+} from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 
@@ -67,7 +72,6 @@ export default function LoginPage() {
       if (!res.ok) {
         const code = json?.errors?.[0]?.code;
         if (code === 'email_not_verified' || res.status === 403) {
-          // Email not verified — show "Cek email kamu"
           setEmailNotVerified(true);
         } else {
           setFormError(json?.errors?.[0]?.message || 'Email atau password salah.');
@@ -75,7 +79,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Read role and redirect accordingly
       const role = json?.data?.user?.role as string | null;
       const normalized = role?.toLowerCase() ?? '';
       const redirectPath = ROLE_REDIRECTS[normalized] || '/dashboard';
@@ -93,15 +96,38 @@ export default function LoginPage() {
     return (
       <Box style={pageStyle}>
         <Container size={420}>
-          <Paper withBorder shadow="md" p={30} radius="md">
-            <Stack align="center" gap="md">
-              <IconMailCheck size={48} color="var(--mantine-color-blue-6)" />
-              <Title order={3} ta="center">Cek email kamu</Title>
-              <Text c="dimmed" ta="center" size="sm">
+          <Paper style={cardStyle} p={40} radius="lg">
+            <Stack align="center" gap="lg">
+              <Box style={iconCircleStyle}>
+                <IconMailCheck size={32} color="var(--mantine-color-primary-6, #f97316)" />
+              </Box>
+              <Title
+                order={3}
+                ta="center"
+                style={{
+                  fontWeight: 900,
+                  fontStyle: 'italic',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                  color: '#fff',
+                }}
+              >
+                Cek Email Kamu
+              </Title>
+              <Text ta="center" size="sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
                 Email kamu belum diverifikasi. Silakan cek inbox dan klik link verifikasi
-                yang sudah dikirim ke <strong>{email}</strong>.
+                yang sudah dikirim ke{' '}
+                <Text span fw={600} style={{ color: 'rgba(255,255,255,0.9)' }}>
+                  {email}
+                </Text>
+                .
               </Text>
-              <Button variant="light" fullWidth onClick={() => setEmailNotVerified(false)}>
+              <Button
+                fullWidth
+                variant="light"
+                onClick={() => setEmailNotVerified(false)}
+                style={secondaryBtnStyle}
+              >
                 Kembali ke Login
               </Button>
             </Stack>
@@ -113,19 +139,44 @@ export default function LoginPage() {
 
   return (
     <Box style={pageStyle}>
-      <Container size={420}>
-        <Title ta="center" mb="xs">AromAI QC Platform</Title>
-        <Text c="dimmed" size="sm" ta="center" mb="xl">
-          Masuk ke akun kamu
-        </Text>
+      {/* Decorative blobs */}
+      <Box style={blobTopRight} />
+      <Box style={blobBottomLeft} />
 
-        <Paper withBorder shadow="md" p={30} radius="md">
+      <Container size={420} style={{ position: 'relative', zIndex: 1 }}>
+        {/* Logo / brand mark */}
+        <Stack align="center" mb="xl" gap={4}>
+          <Box style={logoStyle}>
+            <Text style={{ fontSize: 22, fontWeight: 900, color: '#f97316', fontStyle: 'italic' }}>
+              AQ
+            </Text>
+          </Box>
+          <Title
+            order={1}
+            style={{
+              fontWeight: 900,
+              fontStyle: 'italic',
+              textTransform: 'uppercase',
+              letterSpacing: '0.15em',
+              color: '#fff',
+              fontSize: '1.6rem',
+            }}
+          >
+            AROMAI QC
+          </Title>
+          <Text size="sm" style={{ color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
+            AI-Powered Quality Control
+          </Text>
+        </Stack>
+
+        <Paper style={cardStyle} p={36} radius="lg">
           <form onSubmit={handleSubmit} noValidate>
-            <Stack>
+            <Stack gap="md">
               {formError && (
-                <Alert icon={<IconAlertCircle size={16} />} color="red" variant="light">
-                  {formError}
-                </Alert>
+                <Box style={errorBoxStyle}>
+                  <IconAlertCircle size={16} style={{ flexShrink: 0, color: '#f87171' }} />
+                  <Text size="sm" style={{ color: '#f87171' }}>{formError}</Text>
+                </Box>
               )}
 
               <Input
@@ -139,6 +190,7 @@ export default function LoginPage() {
                 }}
                 error={emailError}
                 disabled={loading}
+                iconLeft={<IconMail size={16} style={{ color: 'rgba(255,255,255,0.4)' }} />}
               />
 
               <Input
@@ -153,15 +205,39 @@ export default function LoginPage() {
                 }}
                 error={passwordError}
                 disabled={loading}
+                iconLeft={<IconLock size={16} style={{ color: 'rgba(255,255,255,0.4)' }} />}
               />
 
-              <Button type="submit" fullWidth loading={loading} mt="sm">
-                Masuk
+              <Button
+                type="submit"
+                fullWidth
+                loading={loading}
+                mt="xs"
+                style={primaryBtnStyle}
+              >
+                <Text
+                  span
+                  style={{
+                    fontWeight: 900,
+                    fontStyle: 'italic',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.12em',
+                    fontSize: '0.85rem',
+                  }}
+                >
+                  MASUK
+                </Text>
               </Button>
 
-              <Text ta="center" size="sm">
+              <Text ta="center" size="sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
                 Belum punya akun?{' '}
-                <Anchor href="/signup" size="sm">Daftar sekarang</Anchor>
+                <Anchor
+                  href="/signup"
+                  size="sm"
+                  style={{ color: '#f97316', fontWeight: 600 }}
+                >
+                  Daftar sekarang
+                </Anchor>
               </Text>
             </Stack>
           </form>
@@ -171,11 +247,89 @@ export default function LoginPage() {
   );
 }
 
+/* ─── Styles ─────────────────────────────────────────────────────────────── */
+
 const pageStyle: React.CSSProperties = {
   position: 'fixed',
   top: 0, left: 0, right: 0, bottom: 0,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: 'linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%)',
+  background: 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%)',
+  overflow: 'hidden',
+};
+
+const cardStyle: React.CSSProperties = {
+  background: 'rgba(255, 255, 255, 0.04)',
+  backdropFilter: 'blur(20px)',
+  WebkitBackdropFilter: 'blur(20px)',
+  border: '1px solid rgba(255, 255, 255, 0.08)',
+  boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
+};
+
+const logoStyle: React.CSSProperties = {
+  width: 56,
+  height: 56,
+  borderRadius: 14,
+  background: 'rgba(249, 115, 22, 0.15)',
+  border: '1px solid rgba(249, 115, 22, 0.3)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const primaryBtnStyle: React.CSSProperties = {
+  background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+  border: 'none',
+  boxShadow: '0 4px 20px rgba(249, 115, 22, 0.4)',
+  height: 44,
+};
+
+const secondaryBtnStyle: React.CSSProperties = {
+  background: 'rgba(255,255,255,0.06)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  color: '#fff',
+};
+
+const errorBoxStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'flex-start',
+  gap: 8,
+  padding: '10px 14px',
+  borderRadius: 8,
+  background: 'rgba(248, 113, 113, 0.1)',
+  border: '1px solid rgba(248, 113, 113, 0.25)',
+};
+
+const iconCircleStyle: React.CSSProperties = {
+  width: 64,
+  height: 64,
+  borderRadius: '50%',
+  background: 'rgba(249, 115, 22, 0.12)',
+  border: '1px solid rgba(249, 115, 22, 0.25)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const blobTopRight: React.CSSProperties = {
+  position: 'absolute',
+  top: -120,
+  right: -120,
+  width: 400,
+  height: 400,
+  borderRadius: '50%',
+  background: 'radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%)',
+  pointerEvents: 'none',
+};
+
+const blobBottomLeft: React.CSSProperties = {
+  position: 'absolute',
+  bottom: -150,
+  left: -150,
+  width: 500,
+  height: 500,
+  borderRadius: '50%',
+  background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)',
+  pointerEvents: 'none',
 };

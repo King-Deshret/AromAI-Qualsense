@@ -11,6 +11,7 @@ import {
   NavLink,
   Loader,
   Box,
+  Badge,
 } from '@mantine/core';
 import {
   IconDashboard,
@@ -24,6 +25,7 @@ import {
   IconFileText,
   IconLogout,
   IconUser,
+  IconChevronDown,
 } from '@tabler/icons-react';
 import { NotificationDropdown } from '@/components/notifications';
 
@@ -52,17 +54,29 @@ const ROLE_HIERARCHY: Record<UserRole, number> = {
   admin: 2,
 };
 
+const ROLE_BADGE_COLOR: Record<UserRole, string> = {
+  operator: '#3b82f6',
+  qc_manager: '#8b5cf6',
+  admin: '#f97316',
+};
+
+const ROLE_LABEL: Record<UserRole, string> = {
+  operator: 'Operator',
+  qc_manager: 'QC Manager',
+  admin: 'Admin',
+};
+
 /** Navigation items with role-based visibility */
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: <IconDashboard size={20} />, minRole: 'operator' },
-  { label: 'Lots', href: '/lots', icon: <IconPackage size={20} />, minRole: 'operator' },
-  { label: 'New Lot', href: '/lots/new', icon: <IconPlus size={20} />, minRole: 'operator' },
-  { label: 'Review Queue', href: '/review', icon: <IconClipboardCheck size={20} />, minRole: 'qc_manager' },
-  { label: 'Reports', href: '/reports', icon: <IconChartBar size={20} />, minRole: 'qc_manager' },
-  { label: 'Users', href: '/admin/users', icon: <IconUsers size={20} />, minRole: 'admin' },
-  { label: 'Thresholds', href: '/admin/thresholds', icon: <IconAdjustments size={20} />, minRole: 'admin' },
-  { label: 'System Config', href: '/admin/config', icon: <IconSettings size={20} />, minRole: 'admin' },
-  { label: 'Audit Log', href: '/admin/audit', icon: <IconFileText size={20} />, minRole: 'admin' },
+  { label: 'Dashboard', href: '/dashboard', icon: <IconDashboard size={18} />, minRole: 'operator' },
+  { label: 'Lots', href: '/lots', icon: <IconPackage size={18} />, minRole: 'operator' },
+  { label: 'New Lot', href: '/lots/new', icon: <IconPlus size={18} />, minRole: 'operator' },
+  { label: 'Review Queue', href: '/review', icon: <IconClipboardCheck size={18} />, minRole: 'qc_manager' },
+  { label: 'Reports', href: '/reports', icon: <IconChartBar size={18} />, minRole: 'qc_manager' },
+  { label: 'Users', href: '/admin/users', icon: <IconUsers size={18} />, minRole: 'admin' },
+  { label: 'Thresholds', href: '/admin/thresholds', icon: <IconAdjustments size={18} />, minRole: 'admin' },
+  { label: 'System Config', href: '/admin/config', icon: <IconSettings size={18} />, minRole: 'admin' },
+  { label: 'Audit Log', href: '/admin/audit', icon: <IconFileText size={18} />, minRole: 'admin' },
 ];
 
 /** Check if a user role meets the minimum required role */
@@ -87,7 +101,6 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch session on mount
   useEffect(() => {
     async function fetchSession() {
       try {
@@ -128,9 +141,10 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
           alignItems: 'center',
           justifyContent: 'center',
           height: '100vh',
+          background: '#0f0f1a',
         }}
       >
-        <Loader size="lg" />
+        <Loader size="lg" color="orange" />
       </Box>
     );
   }
@@ -144,41 +158,134 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
   return (
     <AppShell
       header={{ height: 60 }}
-      navbar={{ width: 250, breakpoint: 'sm' }}
+      navbar={{ width: 240, breakpoint: 'sm' }}
       padding="md"
+      styles={{
+        root: { background: '#0f0f1a' },
+        main: { background: '#0f0f1a', color: '#fff' },
+      }}
     >
-      {/* Header */}
-      <AppShell.Header>
+      {/* ── Header ─────────────────────────────────────────────────────── */}
+      <AppShell.Header
+        style={{
+          background: 'rgba(26, 26, 46, 0.95)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+        }}
+      >
         <Group h="100%" px="md" justify="space-between">
-          <Text fw={700} size="lg">
-            AromAI QC
-          </Text>
+          {/* Brand */}
+          <Group gap={10}>
+            <Box
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                background: 'rgba(249, 115, 22, 0.15)',
+                border: '1px solid rgba(249, 115, 22, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 12, fontWeight: 900, color: '#f97316', fontStyle: 'italic' }}>
+                AQ
+              </Text>
+            </Box>
+            <Text
+              style={{
+                fontWeight: 900,
+                fontStyle: 'italic',
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                color: '#fff',
+                fontSize: '1rem',
+              }}
+            >
+              AROMAI QC
+            </Text>
+          </Group>
 
+          {/* Right side */}
           <Group gap="sm">
-            {/* Notification dropdown */}
             <NotificationDropdown />
 
             {/* User menu */}
-            <Menu shadow="md" width={200} position="bottom-end">
+            <Menu shadow="xl" width={220} position="bottom-end">
               <Menu.Target>
-                <ActionIcon variant="subtle" size="lg" aria-label="User menu">
-                  <IconUser size={22} />
-                </ActionIcon>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Label>
-                  {displayName}
-                  {userRole && (
-                    <Text size="xs" c="dimmed">
-                      {userRole.replace('_', ' ').toUpperCase()}
+                <Box
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '6px 12px',
+                    borderRadius: 8,
+                    cursor: 'pointer',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    background: 'rgba(255,255,255,0.04)',
+                    transition: 'background 0.15s',
+                  }}
+                >
+                  <Box
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: '50%',
+                      background: 'rgba(249, 115, 22, 0.2)',
+                      border: '1px solid rgba(249, 115, 22, 0.4)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <IconUser size={14} color="#f97316" />
+                  </Box>
+                  <Box>
+                    <Text size="xs" fw={600} style={{ color: '#fff', lineHeight: 1.2 }}>
+                      {displayName}
                     </Text>
-                  )}
+                    {userRole && (
+                      <Text size="xs" style={{ color: 'rgba(255,255,255,0.4)', lineHeight: 1.2, fontSize: '0.65rem' }}>
+                        {ROLE_LABEL[userRole]}
+                      </Text>
+                    )}
+                  </Box>
+                  <IconChevronDown size={14} style={{ color: 'rgba(255,255,255,0.4)' }} />
+                </Box>
+              </Menu.Target>
+
+              <Menu.Dropdown
+                style={{
+                  background: '#1a1a2e',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+                }}
+              >
+                <Menu.Label style={{ color: 'rgba(255,255,255,0.4)' }}>
+                  <Group gap={6}>
+                    <Text size="xs">{displayName}</Text>
+                    {userRole && (
+                      <Badge
+                        size="xs"
+                        style={{
+                          background: ROLE_BADGE_COLOR[userRole],
+                          color: '#fff',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.06em',
+                          fontSize: '0.6rem',
+                        }}
+                      >
+                        {ROLE_LABEL[userRole]}
+                      </Badge>
+                    )}
+                  </Group>
                 </Menu.Label>
-                <Menu.Divider />
+                <Menu.Divider style={{ borderColor: 'rgba(255,255,255,0.08)' }} />
                 <Menu.Item
                   leftSection={<IconLogout size={16} />}
                   onClick={handleLogout}
-                  color="red"
+                  style={{ color: '#f87171' }}
                 >
                   Logout
                 </Menu.Item>
@@ -188,22 +295,82 @@ export function AppShellLayout({ children }: { children: React.ReactNode }) {
         </Group>
       </AppShell.Header>
 
-      {/* Sidebar Navigation */}
-      <AppShell.Navbar p="xs">
-        {visibleNavItems.map((item) => (
-          <NavLink
-            key={item.href}
-            label={item.label}
-            leftSection={item.icon}
-            active={pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href + '/'))}
-            onClick={() => router.push(item.href)}
-            style={{ borderRadius: 6, marginBottom: 2 }}
-          />
-        ))}
+      {/* ── Sidebar ────────────────────────────────────────────────────── */}
+      <AppShell.Navbar
+        p="xs"
+        style={{
+          background: 'rgba(22, 33, 62, 0.95)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderRight: '1px solid rgba(255, 255, 255, 0.06)',
+        }}
+      >
+        <Stack gap={2}>
+          {visibleNavItems.map((item) => {
+            const isActive =
+              pathname === item.href ||
+              (item.href !== '/' && pathname.startsWith(item.href + '/'));
+
+            return (
+              <Box
+                key={item.href}
+                onClick={() => router.push(item.href)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  padding: '9px 12px',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  position: 'relative',
+                  background: isActive
+                    ? 'rgba(249, 115, 22, 0.12)'
+                    : 'transparent',
+                  borderLeft: isActive
+                    ? '3px solid #f97316'
+                    : '3px solid transparent',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <Box
+                  style={{
+                    color: isActive ? '#f97316' : 'rgba(255,255,255,0.45)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  {item.icon}
+                </Box>
+                <Text
+                  size="xs"
+                  style={{
+                    color: isActive ? '#fff' : 'rgba(255,255,255,0.55)',
+                    fontWeight: isActive ? 700 : 500,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.07em',
+                    fontSize: '0.72rem',
+                  }}
+                >
+                  {item.label}
+                </Text>
+              </Box>
+            );
+          })}
+        </Stack>
       </AppShell.Navbar>
 
-      {/* Main content */}
+      {/* ── Main content ───────────────────────────────────────────────── */}
       <AppShell.Main>{children}</AppShell.Main>
     </AppShell>
+  );
+}
+
+/* ─── Tiny helper ─────────────────────────────────────────────────────────── */
+function Stack({ children, gap }: { children: React.ReactNode; gap?: number }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: gap ?? 0 }}>
+      {children}
+    </div>
   );
 }
