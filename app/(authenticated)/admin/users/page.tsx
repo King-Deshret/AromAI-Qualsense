@@ -4,12 +4,13 @@
  * User Management Page (/admin/users)
  *
  * Admin-only page for managing user accounts and role assignments.
- * Uses Buildpad CollectionList for listing and custom forms for create/edit.
+ * Uses /api/admin/users (Supabase Admin API + DaaS) instead of
+ * ItemsService('daas_users') which fails on system collections.
  *
  * Features:
- * - List users with email, name, role, is_active status
+ * - List users with email, name, role, status
  * - Create new users with email, name, role
- * - Edit users: modify name, role, is_active
+ * - Edit users: modify name, role, status
  * - Enforce unique email (case-insensitive)
  * - Prevent admin from demoting themselves or deactivating themselves
  *
@@ -22,8 +23,10 @@ import {
   Badge,
   Button,
   Group,
+  Loader,
   Paper,
   Stack,
+  Table,
   Text,
   Title,
 } from '@mantine/core';
@@ -31,15 +34,12 @@ import {
   IconAlertCircle,
   IconArrowLeft,
   IconCheck,
+  IconRefresh,
   IconUserPlus,
 } from '@tabler/icons-react';
-import { CollectionList } from '@/components/ui/collection-list';
 import { Input } from '@/components/ui/input';
 import { SelectDropdown } from '@/components/ui/select-dropdown';
 import { Toggle } from '@/components/ui/toggle';
-import { ItemsService } from '@/lib/buildpad/services';
-import type { AnyItem } from '@/lib/buildpad/types';
-import type { Header } from '@/components/ui/vtable-types';
 
 /** Role options for the dropdown */
 const ROLE_OPTIONS = [
@@ -100,7 +100,6 @@ function validateCreateForm(form: {
 }): UserFormErrors {
   const errors: UserFormErrors = {};
 
-  // Email validation
   if (!form.email || form.email.trim() === '') {
     errors.email = 'Email is required';
   } else if (!isValidEmail(form.email.trim())) {
@@ -109,14 +108,12 @@ function validateCreateForm(form: {
     errors.email = 'Email must not exceed 254 characters';
   }
 
-  // Name validation (1-100 chars)
   if (!form.first_name || form.first_name.trim() === '') {
     errors.first_name = 'Name is required';
   } else if (form.first_name.trim().length > 100) {
     errors.first_name = 'Name must not exceed 100 characters';
   }
 
-  // Role validation
   if (!form.role) {
     errors.role = 'Role is required';
   } else if (!['operator', 'qc_manager', 'admin'].includes(form.role)) {
@@ -135,14 +132,12 @@ function validateEditForm(form: {
 }): UserFormErrors {
   const errors: UserFormErrors = {};
 
-  // Name validation (1-100 chars)
   if (!form.first_name || form.first_name.trim() === '') {
     errors.first_name = 'Name is required';
   } else if (form.first_name.trim().length > 100) {
     errors.first_name = 'Name must not exceed 100 characters';
   }
 
-  // Role validation
   if (!form.role) {
     errors.role = 'Role is required';
   } else if (!['operator', 'qc_manager', 'admin'].includes(form.role)) {
@@ -152,9 +147,8 @@ function validateEditForm(form: {
   return errors;
 }
 
-/**
- * Create User Form Component
- */
+// ─── Create User Form ─────────────────────────────────────────────────────────
+
 function CreateUserForm({ onSuccess, onCancel }: { onSuccess: () => void; onCancel: () => void }) {
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -169,46 +163,38 @@ function CreateUserForm({ onSuccess, onCancel }: { onSuccess: () => void; onCanc
 
     const validationErrors = validateCreateForm({ email, first_name: firstName, role });
     setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) {
-      return;
-    }
+    if (Object.keys(validationErrors).length > 0) return;
 
     setSubmitting(true);
-
     try {
-      const itemsService = new ItemsService('daas_users');
-      await itemsService.createOne({
-        email: email.trim().toLowerCase(),
-        first_name: firstName.trim(),
-        role,
-        status: 'active',
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          first_name: firstName.trim(),
+          role,
+        }),
       });
 
-      onSuccess();
-    } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'errors' in err) {
-        const serverErrors = (
-          err as { errors: Array<{ message?: string; extensions?: { code?: string; field?: string } }> }
-        ).errors;
-        if (Array.isArray(serverErrors) && serverErrors.length > 0) {
-          // Check for duplicate email error
-          const duplicateError = serverErrors.find(
-            (e) => e.extensions?.code === 'RECORD_NOT_UNIQUE' || e.message?.toLowerCase().includes('unique')
-          );
-          if (duplicateError) {
-            setErrors({ email: 'A user with this email already exists' });
-          } else {
-            setServerError(serverErrors.map((e) => e.message).join('. '));
-          }
+      const json = await res.json();
+
+      if (!res.ok) {
+        const errMsg = json?.errors?.[0]?.message ?? 'Failed to create user. Please try again.';
+        const errCode = json?.errors?.[0]?.extensions?.code;
+        const errField = json?.errors?.[0]?.extensions?.field;
+        if (errCode === 'RECORD_NOT_UNIQUE' || errField === 'email') {
+          setErrors({ email: 'A user with this email already exists' });
         } else {
-          setServerError('Failed to create user. Please try again.');
+          setServerError(errMsg);
         }
-      } else if (err instanceof Error) {
-        setServerError(err.message);
-      } else {
-        setServerError('An unexpected error occurred.');
+        return;
       }
+
+      onSuccess();
+    } catch (err) {
+      setServerError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     } finally {
       setSubmitting(false);
     }
@@ -300,9 +286,8 @@ function CreateUserForm({ onSuccess, onCancel }: { onSuccess: () => void; onCanc
   );
 }
 
-/**
- * Edit User Form Component
- */
+// ─── Edit User Form ───────────────────────────────────────────────────────────
+
 function EditUserForm({
   user,
   currentUserId,
@@ -329,49 +314,42 @@ function EditUserForm({
 
     const validationErrors = validateEditForm({ first_name: firstName, role });
     setErrors(validationErrors);
+    if (Object.keys(validationErrors).length > 0) return;
 
-    if (Object.keys(validationErrors).length > 0) {
-      return;
-    }
-
-    // Prevent self-demotion
     if (isSelf && role !== user.role) {
       setErrors({ role: 'You cannot change your own role' });
       return;
     }
 
-    // Prevent self-deactivation
     if (isSelf && !isActive) {
       setErrors({ is_active: 'You cannot deactivate your own account' });
       return;
     }
 
     setSubmitting(true);
-
     try {
-      const itemsService = new ItemsService('daas_users');
-      await itemsService.updateOne(user.id, {
-        first_name: firstName.trim(),
-        role,
-        status: isActive ? 'active' : 'suspended',
+      const res = await fetch(`/api/admin/users/${user.id}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          first_name: firstName.trim(),
+          role,
+          status: isActive ? 'active' : 'suspended',
+        }),
       });
 
-      onSuccess();
-    } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'errors' in err) {
-        const serverErrors = (
-          err as { errors: Array<{ message?: string }> }
-        ).errors;
-        if (Array.isArray(serverErrors) && serverErrors.length > 0) {
-          setServerError(serverErrors.map((e) => e.message).join('. '));
-        } else {
-          setServerError('Failed to update user. Please try again.');
-        }
-      } else if (err instanceof Error) {
-        setServerError(err.message);
-      } else {
-        setServerError('An unexpected error occurred.');
+      const json = await res.json();
+
+      if (!res.ok) {
+        const errMsg = json?.errors?.[0]?.message ?? 'Failed to update user. Please try again.';
+        setServerError(errMsg);
+        return;
       }
+
+      onSuccess();
+    } catch (err) {
+      setServerError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     } finally {
       setSubmitting(false);
     }
@@ -470,14 +448,109 @@ function EditUserForm({
   );
 }
 
-/**
- * User Management Page
- */
+// ─── User List ────────────────────────────────────────────────────────────────
+
+function UserList({
+  users,
+  loading,
+  error,
+  onRefresh,
+  onUserClick,
+}: {
+  users: UserRecord[];
+  loading: boolean;
+  error: string | null;
+  onRefresh: () => void;
+  onUserClick: (user: UserRecord) => void;
+}) {
+  if (loading) {
+    return (
+      <Stack align="center" justify="center" h={200}>
+        <Loader size="lg" />
+        <Text c="dimmed">Loading users...</Text>
+      </Stack>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert icon={<IconAlertCircle size={16} />} color="red" variant="light">
+        {error}
+        <Button size="xs" variant="subtle" ml="sm" onClick={onRefresh}>
+          Retry
+        </Button>
+      </Alert>
+    );
+  }
+
+  if (users.length === 0) {
+    return (
+      <Text c="dimmed" ta="center" py="xl">
+        No users found.
+      </Text>
+    );
+  }
+
+  return (
+    <Paper withBorder radius="md" style={{ overflow: 'hidden' }}>
+      <Table striped highlightOnHover>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Email</Table.Th>
+            <Table.Th>Name</Table.Th>
+            <Table.Th>Role</Table.Th>
+            <Table.Th>Status</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {users.map((user) => {
+            const name = [user.first_name, user.last_name].filter(Boolean).join(' ');
+            const isActive = user.status === 'active';
+            return (
+              <Table.Tr
+                key={user.id}
+                style={{ cursor: 'pointer' }}
+                onClick={() => onUserClick(user)}
+                data-testid={`user-row-${user.id}`}
+              >
+                <Table.Td>
+                  <Text size="sm">{user.email}</Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text size="sm">{name || '—'}</Text>
+                </Table.Td>
+                <Table.Td>
+                  {user.role ? (
+                    <Badge color={ROLE_COLORS[user.role] || 'gray'} variant="light" size="sm">
+                      {ROLE_LABELS[user.role] || user.role}
+                    </Badge>
+                  ) : (
+                    <Text size="sm" c="dimmed">—</Text>
+                  )}
+                </Table.Td>
+                <Table.Td>
+                  <Badge color={isActive ? 'green' : 'gray'} variant="light" size="sm">
+                    {isActive ? 'Active' : 'Inactive'}
+                  </Badge>
+                </Table.Td>
+              </Table.Tr>
+            );
+          })}
+        </Table.Tbody>
+      </Table>
+    </Paper>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+
 export default function UserManagementPage() {
   const [view, setView] = useState<'list' | 'create' | 'edit'>('list');
   const [selectedUser, setSelectedUser] = useState<UserRecord | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string>('');
-  const [listKey, setListKey] = useState(0);
+  const [users, setUsers] = useState<UserRecord[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [usersError, setUsersError] = useState<string | null>(null);
 
   // Fetch current user ID on mount
   useEffect(() => {
@@ -495,88 +568,49 @@ export default function UserManagementPage() {
     fetchCurrentUser();
   }, []);
 
-  const handleItemClick = useCallback(async (item: AnyItem) => {
-    // Load full user record for editing
+  const fetchUsers = useCallback(async () => {
+    setLoadingUsers(true);
+    setUsersError(null);
     try {
-      const itemsService = new ItemsService('daas_users');
-      const user = await itemsService.readOne(item.id as string, [
-        'id', 'email', 'first_name', 'last_name', 'role', 'status',
-      ]);
-      setSelectedUser(user as unknown as UserRecord);
-      setView('edit');
-    } catch {
-      // If we can't load the user, use what we have from the list
-      setSelectedUser({
-        id: item.id as string,
-        email: (item.email as string) || '',
-        first_name: (item.first_name as string) || null,
-        last_name: (item.last_name as string) || null,
-        role: (item.role as string) || null,
-        status: (item.status as string) || 'active',
-      });
-      setView('edit');
+      const res = await fetch('/api/admin/users', { credentials: 'include' });
+      const json = await res.json();
+      if (!res.ok) {
+        setUsersError(json?.errors?.[0]?.message ?? `Failed to load users (HTTP ${res.status})`);
+        return;
+      }
+      setUsers(Array.isArray(json.data) ? json.data : []);
+    } catch (err) {
+      setUsersError(err instanceof Error ? err.message : 'Failed to load users');
+    } finally {
+      setLoadingUsers(false);
     }
+  }, []);
+
+  // Load users when on list view
+  useEffect(() => {
+    if (view === 'list') {
+      fetchUsers();
+    }
+  }, [view, fetchUsers]);
+
+  const handleUserClick = useCallback((user: UserRecord) => {
+    setSelectedUser(user);
+    setView('edit');
   }, []);
 
   const handleCreateSuccess = useCallback(() => {
     setView('list');
-    setListKey((k) => k + 1); // Force CollectionList refresh
   }, []);
 
   const handleEditSuccess = useCallback(() => {
     setView('list');
     setSelectedUser(null);
-    setListKey((k) => k + 1); // Force CollectionList refresh
   }, []);
 
   const handleCancel = useCallback(() => {
     setView('list');
     setSelectedUser(null);
   }, []);
-
-  /**
-   * Custom cell renderer for role badges and active status.
-   */
-  const renderCell = useCallback(
-    (item: AnyItem, header: Header) => {
-      // Role as badge
-      if (header.value === 'role') {
-        const role = item.role as string | null;
-        if (!role) return <Text size="sm" c="dimmed">—</Text>;
-        return (
-          <Badge color={ROLE_COLORS[role] || 'gray'} variant="light" size="sm">
-            {ROLE_LABELS[role] || role}
-          </Badge>
-        );
-      }
-
-      // Status as active/inactive badge
-      if (header.value === 'status') {
-        const status = item.status as string;
-        const isActive = status === 'active';
-        return (
-          <Badge color={isActive ? 'green' : 'gray'} variant="light" size="sm">
-            {isActive ? 'Active' : 'Inactive'}
-          </Badge>
-        );
-      }
-
-      // Full name display
-      if (header.value === 'first_name') {
-        const firstName = item.first_name as string | null;
-        const lastName = item.last_name as string | null;
-        const name = [firstName, lastName].filter(Boolean).join(' ');
-        return (
-          <Text size="sm" truncate="end">
-            {name || '—'}
-          </Text>
-        );
-      }
-
-      return null;
-    },
-    [],
-  );
 
   return (
     <Stack gap="md">
@@ -606,6 +640,14 @@ export default function UserManagementPage() {
         <Stack gap="md">
           <Group justify="flex-end">
             <Button
+              variant="subtle"
+              leftSection={<IconRefresh size={16} />}
+              onClick={fetchUsers}
+              loading={loadingUsers}
+            >
+              Refresh
+            </Button>
+            <Button
               leftSection={<IconUserPlus size={16} />}
               onClick={() => setView('create')}
               data-testid="add-user-btn"
@@ -613,20 +655,12 @@ export default function UserManagementPage() {
               Add User
             </Button>
           </Group>
-          <CollectionList
-            key={listKey}
-            collection="daas_users"
-            fields={['email', 'first_name', 'role', 'status']}
-            enableSearch
-            enableSort
-            enableFilter={false}
-            enableCreate={false}
-            enableSelection={false}
-            enableDelete={false}
-            limit={25}
-            primaryKeyField="id"
-            onItemClick={handleItemClick}
-            renderCell={renderCell}
+          <UserList
+            users={users}
+            loading={loadingUsers}
+            error={usersError}
+            onRefresh={fetchUsers}
+            onUserClick={handleUserClick}
           />
         </Stack>
       )}

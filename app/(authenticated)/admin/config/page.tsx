@@ -298,6 +298,12 @@ export default function SystemConfigPage() {
             <Title order={4}>AI Service Health</Title>
           </Group>
 
+          <Text size="sm" c="dimmed" mb="xs">
+            The AI service processes inspection images to detect defects and assign quality grades.
+            Health checks run automatically at the configured interval to ensure the service is reachable.
+            If the status shows UNKNOWN, no health check has been recorded yet — this is normal on first setup.
+          </Text>
+
           <Group gap="xl">
             <Stack gap={4}>
               <Text size="sm" c="dimmed">Status</Text>

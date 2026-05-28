@@ -439,7 +439,8 @@ function InspectionDetailView({ inspectionId }: { inspectionId: string }) {
         setLoading(true);
         setError(null);
 
-        const fields = [
+        // Use fields[] array format to avoid issues with comma-separated dot-notation
+        const fieldParams = [
           '*',
           'lot_id.id',
           'lot_id.lot_number',
@@ -452,10 +453,12 @@ function InspectionDetailView({ inspectionId }: { inspectionId: string }) {
           'inspector_id.id',
           'inspector_id.first_name',
           'inspector_id.last_name',
-        ].join(',');
+        ]
+          .map((f) => `fields[]=${encodeURIComponent(f)}`)
+          .join('&');
 
         const res = await fetch(
-          `/api/items/inspections/${inspectionId}?fields=${fields}`,
+          `/api/items/inspections/${inspectionId}?${fieldParams}`,
           { credentials: 'include' },
         );
 
