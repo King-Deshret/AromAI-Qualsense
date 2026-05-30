@@ -1,452 +1,143 @@
 'use client';
-
-import { useEffect, useState } from 'react';
-import {
-  Paper, Button, Title, Text, Container,
-  Stack, Box, Anchor, Loader, Group,
-} from '@mantine/core';
-import {
-  IconMailCheck,
-  IconMail,
-  IconLock,
-  IconUser,
-  IconShield,
-  IconClipboardCheck,
-  IconAlertCircle,
-} from '@tabler/icons-react';
+import { useState, FormEvent } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Select } from '@/components/ui/select';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
-const ROLE_CONFIG: Record<string, {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}> = {
-  admin: {
-    icon: <IconShield size={22} />,
-    title: 'Admin',
-    description: 'Akses penuh sistem',
-  },
-  qc_manager: {
-    icon: <IconClipboardCheck size={22} />,
-    title: 'QC Manager',
-    description: 'Review & laporan kualitas',
-  },
-  operator: {
-    icon: <IconUser size={22} />,
-    title: 'Operator',
-    description: 'Input lot & inspeksi',
-  },
-};
+const ROLE_OPTIONS = [
+  { value: 'Operator', label: 'Operator' },
+  { value: 'Manager', label: 'Manager' },
+  { value: 'Admin', label: 'Admin' },
+];
 
 export default function SignupPage() {
+  const router = useRouter();
+  const [form, setForm] = useState({ name: '', email: '', password: '', role: '' });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [globalError, setGlobalError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [checkingSlots, setCheckingSlots] = useState(true);
-  const [adminAvailable, setAdminAvailable] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState<string>('operator');
-  const [error, setError] = useState<string | null>(null);
+  function setField(field: string, value: string) {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: '' }));
+  }
 
-  useEffect(() => {
-    async function checkSlots() {
-      try {
-        const res = await fetch('/api/auth/signup');
-        if (res.ok) {
-          const json = await res.json();
-          setAdminAvailable(json.adminAvailable === true);
-          if (!json.adminAvailable) setRole('qc_manager');
-        }
-      } catch {
-        setAdminAvailable(false);
-      } finally {
-        setCheckingSlots(false);
-      }
-    }
-    checkSlots();
-  }, []);
-
-  const availableRoles = adminAvailable
-    ? ['admin', 'qc_manager', 'operator']
-    : ['qc_manager', 'operator'];
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setError(null);
+    setGlobalError('');
+    const newErrors: Record<string, string> = {};
 
-    if (!firstName.trim()) { setError('Nama depan wajib diisi.'); return; }
-    if (!email.trim() || !/^\S+@\S+\.\S+$/.test(email.trim())) { setError('Format email tidak valid.'); return; }
-    if (password.length < 6) { setError('Password minimal 6 karakter.'); return; }
+    if (!form.name.trim() || form.name.length > 100) newErrors.name = 'Nama 1–100 karakter';
+    if (!form.email) newErrors.email = 'Email wajib diisi';
+    if (form.password.length < 8) newErrors.password = 'Password minimal 8 karakter';
+    if (!form.role) newErrors.role = 'Pilih role';
+
+    if (Object.keys(newErrors).length) {
+      setErrors(newErrors);
+      return;
+    }
 
     setLoading(true);
     try {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email.trim().toLowerCase(),
-          password,
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          role,
-        }),
+        body: JSON.stringify(form),
       });
-
-      const json = await res.json();
+      const data = await res.json();
 
       if (!res.ok) {
-        setError(json?.errors?.[0]?.message || 'Gagal membuat akun.');
+        if (data.errors) {
+          const fieldErrors: Record<string, string> = {};
+          for (const err of data.errors) fieldErrors[err.field] = err.message;
+          setErrors(fieldErrors);
+        } else {
+          setGlobalError(data.message ?? 'Pendaftaran gagal');
+        }
         return;
       }
 
-      setSubmitted(true);
-      // Auto-redirect to login after 2 seconds
-      setTimeout(() => { window.location.href = '/login'; }, 2000);
+      router.replace('/login?registered=1');
     } catch {
-      setError('Terjadi kesalahan jaringan. Coba lagi.');
+      setGlobalError('Terjadi kesalahan. Silakan coba lagi.');
     } finally {
       setLoading(false);
     }
-  };
-
-  // Success state
-  if (submitted) {
-    return (
-      <Box style={pageStyle}>
-        <Box style={blobTopRight} />
-        <Box style={blobBottomLeft} />
-        <Container size={420} style={{ position: 'relative', zIndex: 1 }}>
-          <Paper style={cardStyle} p={40} radius="lg">
-            <Stack align="center" gap="lg">
-              <Box style={iconCircleStyle}>
-                <IconMailCheck size={32} color="#c9a84c" />
-              </Box>
-              <Title
-                order={3}
-                ta="center"
-                style={{
-                  fontWeight: 900,
-                  fontStyle: 'italic',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  color: '#fff',
-                }}
-              >
-                Cek Email Kamu!
-              </Title>
-              <Text ta="center" size="sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                Link verifikasi sudah dikirim ke{' '}
-                <Text span fw={600} style={{ color: 'rgba(255,255,255,0.9)' }}>
-                  {email}
-                </Text>
-                . Klik link tersebut untuk mengaktifkan akun kamu.
-              </Text>
-              <Anchor
-                href="/login"
-                size="sm"
-                style={{ color: '#c9a84c', fontWeight: 600 }}
-              >
-                Kembali ke halaman login
-              </Anchor>
-            </Stack>
-          </Paper>
-        </Container>
-      </Box>
-    );
   }
 
   return (
-    <Box style={pageStyle}>
-      <Box style={blobTopRight} />
-      <Box style={blobBottomLeft} />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-50 to-gray-100 p-4">
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold text-sm">
+              A
+            </div>
+            <span className="text-xs font-medium text-brand-700 uppercase tracking-wide">AromAI QC</span>
+          </div>
+          <CardTitle className="text-xl">Buat Akun</CardTitle>
+          <p className="text-sm text-gray-500">Isi form berikut untuk mendaftar</p>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <Input
+              label="Nama Lengkap"
+              value={form.name}
+              onChange={(e) => setField('name', e.target.value)}
+              placeholder="Nama lengkap Anda"
+              error={errors.name}
+              required
+            />
+            <Input
+              label="Email"
+              type="email"
+              value={form.email}
+              onChange={(e) => setField('email', e.target.value)}
+              placeholder="email@perusahaan.com"
+              error={errors.email}
+              required
+            />
+            <Input
+              label="Password"
+              type="password"
+              value={form.password}
+              onChange={(e) => setField('password', e.target.value)}
+              placeholder="Minimal 8 karakter"
+              error={errors.password}
+              required
+            />
+            <Select
+              label="Role"
+              value={form.role}
+              onChange={(e) => setField('role', e.target.value)}
+              options={ROLE_OPTIONS}
+              placeholder="Pilih role..."
+              error={errors.role}
+              required
+            />
 
-      <Container size={480} style={{ position: 'relative', zIndex: 1 }}>
-        {/* Brand */}
-        <Stack align="center" mb="xl" gap={4}>
-          <Box style={logoStyle}>
-            <Text style={{ fontSize: 22, fontWeight: 900, color: '#c9a84c', fontStyle: 'italic' }}>
-              AQ
-            </Text>
-          </Box>
-          <Title
-            order={1}
-            style={{
-              fontWeight: 900,
-              fontStyle: 'italic',
-              textTransform: 'uppercase',
-              letterSpacing: '0.15em',
-              color: '#fff',
-              fontSize: '1.6rem',
-            }}
-          >
-            DAFTAR AKUN
-          </Title>
-          <Text size="sm" style={{ color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>
-            AromAI QC Platform
-          </Text>
-        </Stack>
+            {globalError && (
+              <div className="rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+                {globalError}
+              </div>
+            )}
 
-        <Paper style={cardStyle} p={36} radius="lg">
-          {checkingSlots ? (
-            <Stack align="center" py="xl" gap="md">
-              <Loader size="sm" color="orange" />
-              <Text size="sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                Memeriksa ketersediaan slot...
-              </Text>
-            </Stack>
-          ) : (
-            <form onSubmit={handleSubmit} noValidate>
-              <Stack gap="md">
-                {error && (
-                  <Box style={errorBoxStyle}>
-                    <IconAlertCircle size={16} style={{ flexShrink: 0, color: '#f87171' }} />
-                    <Text size="sm" style={{ color: '#f87171' }}>{error}</Text>
-                  </Box>
-                )}
+            <Button type="submit" loading={loading} className="w-full">
+              Daftar
+            </Button>
 
-                <Group grow>
-                  <Input
-                    label="Nama Depan"
-                    placeholder="John"
-                    required
-                    value={firstName}
-                    onChange={(val) => setFirstName(typeof val === 'string' ? val : '')}
-                    iconLeft={<IconUser size={16} style={{ color: 'rgba(255,255,255,0.4)' }} />}
-                  />
-                  <Input
-                    label="Nama Belakang"
-                    placeholder="Doe"
-                    value={lastName}
-                    onChange={(val) => setLastName(typeof val === 'string' ? val : '')}
-                  />
-                </Group>
-
-                <Input
-                  label="Email"
-                  placeholder="kamu@contoh.com"
-                  required
-                  value={email}
-                  onChange={(val) => setEmail(typeof val === 'string' ? val : '')}
-                  iconLeft={<IconMail size={16} style={{ color: 'rgba(255,255,255,0.4)' }} />}
-                />
-
-                <Input
-                  label="Password"
-                  placeholder="Minimal 6 karakter"
-                  required
-                  masked
-                  value={password}
-                  onChange={(val) => setPassword(typeof val === 'string' ? val : '')}
-                  iconLeft={<IconLock size={16} style={{ color: 'rgba(255,255,255,0.4)' }} />}
-                />
-
-                {/* Role selection — card style */}
-                <Stack gap="xs">
-                  <Group gap={6}>
-                    <Text size="sm" fw={600} style={{ color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.75rem' }}>
-                      Pilih Role
-                    </Text>
-                    {!adminAvailable && (
-                      <Text size="xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
-                        (Slot admin penuh)
-                      </Text>
-                    )}
-                  </Group>
-                  <Stack gap={8}>
-                    {availableRoles.map((r) => {
-                      const cfg = ROLE_CONFIG[r];
-                      const isSelected = role === r;
-                      return (
-                        <Box
-                          key={r}
-                          onClick={() => setRole(r)}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 14,
-                            padding: '12px 16px',
-                            borderRadius: 10,
-                            cursor: 'pointer',
-                            border: isSelected
-                              ? '1px solid rgba(201, 168, 76, 0.6)'
-                              : '1px solid rgba(255, 255, 255, 0.08)',
-                            background: isSelected
-                              ? 'rgba(201, 168, 76, 0.1)'
-                              : 'rgba(255, 255, 255, 0.03)',
-                            transition: 'all 0.15s ease',
-                          }}
-                        >
-                          <Box
-                            style={{
-                              width: 40,
-                              height: 40,
-                              borderRadius: 10,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              background: isSelected
-                                ? 'rgba(201, 168, 76, 0.2)'
-                                : 'rgba(255, 255, 255, 0.06)',
-                              color: isSelected ? '#c9a84c' : 'rgba(255,255,255,0.5)',
-                              flexShrink: 0,
-                            }}
-                          >
-                            {cfg.icon}
-                          </Box>
-                          <Box style={{ flex: 1 }}>
-                            <Text
-                              size="sm"
-                              fw={700}
-                              style={{
-                                color: isSelected ? '#fff' : 'rgba(255,255,255,0.7)',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.06em',
-                                fontSize: '0.78rem',
-                              }}
-                            >
-                              {cfg.title}
-                            </Text>
-                            <Text size="xs" style={{ color: 'rgba(255,255,255,0.4)', marginTop: 2 }}>
-                              {cfg.description}
-                            </Text>
-                          </Box>
-                          {/* Selection indicator */}
-                          <Box
-                            style={{
-                              width: 16,
-                              height: 16,
-                              borderRadius: '50%',
-                              border: isSelected
-                                ? '2px solid #c9a84c'
-                                : '2px solid rgba(255,255,255,0.2)',
-                              background: isSelected ? '#c9a84c' : 'transparent',
-                              flexShrink: 0,
-                              transition: 'all 0.15s ease',
-                            }}
-                          />
-                        </Box>
-                      );
-                    })}
-                  </Stack>
-                </Stack>
-
-                <Button
-                  type="submit"
-                  fullWidth
-                  loading={loading}
-                  mt="xs"
-                  style={primaryBtnStyle}
-                >
-                  <Text
-                    span
-                    style={{
-                      fontWeight: 900,
-                      fontStyle: 'italic',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.12em',
-                      fontSize: '0.85rem',
-                    }}
-                  >
-                    DAFTAR
-                  </Text>
-                </Button>
-
-                <Text ta="center" size="sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                  Sudah punya akun?{' '}
-                  <Anchor href="/login" size="sm" style={{ color: '#c9a84c', fontWeight: 600 }}>
-                    Masuk
-                  </Anchor>
-                </Text>
-              </Stack>
-            </form>
-          )}
-        </Paper>
-      </Container>
-    </Box>
+            <p className="text-center text-sm text-gray-500">
+              Sudah punya akun?{' '}
+              <Link href="/login" className="text-brand-600 font-medium hover:underline">
+                Masuk
+              </Link>
+            </p>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
-
-/* ─── Styles — Sima Arôme palette ────────────────────────────────────────── */
-
-const pageStyle: React.CSSProperties = {
-  position: 'fixed',
-  top: 0, left: 0, right: 0, bottom: 0,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  background: 'linear-gradient(135deg, #0d2818 0%, #1a4a2e 50%, #0f3320 100%)',
-  overflow: 'hidden',
-  overflowY: 'auto',
-};
-
-const cardStyle: React.CSSProperties = {
-  background: 'rgba(255, 255, 255, 0.05)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(201, 168, 76, 0.2)',
-  boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5)',
-};
-
-const logoStyle: React.CSSProperties = {
-  width: 56,
-  height: 56,
-  borderRadius: 14,
-  background: 'rgba(201, 168, 76, 0.15)',
-  border: '1px solid rgba(201, 168, 76, 0.4)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const primaryBtnStyle: React.CSSProperties = {
-  background: 'linear-gradient(135deg, #1a4a2e 0%, #2d6b45 100%)',
-  border: '1px solid rgba(201, 168, 76, 0.4)',
-  boxShadow: '0 4px 20px rgba(26, 74, 46, 0.5)',
-  height: 44,
-};
-
-const errorBoxStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: 8,
-  padding: '10px 14px',
-  borderRadius: 8,
-  background: 'rgba(248, 113, 113, 0.1)',
-  border: '1px solid rgba(248, 113, 113, 0.25)',
-};
-
-const iconCircleStyle: React.CSSProperties = {
-  width: 64,
-  height: 64,
-  borderRadius: '50%',
-  background: 'rgba(201, 168, 76, 0.12)',
-  border: '1px solid rgba(201, 168, 76, 0.3)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const blobTopRight: React.CSSProperties = {
-  position: 'absolute',
-  top: -120,
-  right: -120,
-  width: 400,
-  height: 400,
-  borderRadius: '50%',
-  background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)',
-  pointerEvents: 'none',
-};
-
-const blobBottomLeft: React.CSSProperties = {
-  position: 'absolute',
-  bottom: -150,
-  left: -150,
-  width: 500,
-  height: 500,
-  borderRadius: '50%',
-  background: 'radial-gradient(circle, rgba(45,107,69,0.2) 0%, transparent 70%)',
-  pointerEvents: 'none',
-};

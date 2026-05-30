@@ -1,30 +1,21 @@
 import { defineConfig } from 'vitest/config';
-import path from 'path';
+import { resolve } from 'path';
 
 export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
     include: ['**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['node_modules', '.next', 'e2e/**'],
+    exclude: ['node_modules', '.next', 'playwright'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov', 'html'],
-      include: ['lib/**/*.ts', 'app/api/**/*.ts'],
-      exclude: [
-        'node_modules',
-        '.next',
-        'e2e/**',
-        '**/*.d.ts',
-        '**/*.config.*',
-        'components/ui/**',
-        '**/*.tsx',
-      ],
+      reporter: ['text', 'html'],
+      exclude: ['node_modules/', '.next/', 'playwright/', '**/*.config.*'],
     },
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, '.'),
+      '@': resolve(__dirname, 'src'),
     },
   },
 });

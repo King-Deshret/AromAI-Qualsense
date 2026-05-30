@@ -1,50 +1,71 @@
-/**
- * @buildpad-origin @buildpad/cli/supabase-auth/middleware
- * @buildpad-version 1.0.0
- *
- * This file was copied from Buildpad UI Packages.
- * To update, run: npx @buildpad/cli add supabase-auth/middleware --overwrite
- *
- * Docs: https://buildpad.dev/components/supabase-auth/middleware
- */
+import { NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
 
-/**
- * Next.js Middleware
- *
- * Root middleware file that handles:
- * 1. HTTPS enforcement in production (HTTP → HTTPS 301 redirect) (Requirement 18.3)
- * 2. Auth session refresh
- *
- * @buildpad/origin: middleware
- * @buildpad/version: 1.0.0
- */
+const ROLE_ROUTES: Record<string, string[]> = {
+  Operator: ['/operator'],
+  Manager: ['/manager'],
+  Admin: ['/admin'],
+};
 
-import { NextResponse, type NextRequest } from 'next/server';
-import { updateSession } from '@/lib/supabase/middleware';
+const PUBLIC_ROUTES = ['/login', '/signup'];
 
 export async function middleware(request: NextRequest) {
-  // HTTPS enforcement: redirect HTTP → HTTPS in production (Requirement 18.3)
-  if (process.env.NODE_ENV === 'production') {
-    const proto = request.headers.get('x-forwarded-proto');
-    if (proto === 'http') {
-      const httpsUrl = new URL(request.url);
-      httpsUrl.protocol = 'https:';
-      return NextResponse.redirect(httpsUrl.toString(), 301);
+  const { pathname } = request.nextUrl;
+
+  // Allow public routes
+  if (PUBLIC_ROUTES.some((r) => pathname.startsWith(r))) {
+    return NextResponse.next();
+  }
+
+  // Allow Next.js internals and API routes (auth checked inside each route handler)
+  if (pathname.startsWith('/_next') || pathname.startsWith('/api')) {
+    return NextResponse.next();
+  }
+
+  // Build a Supabase client from the request cookies
+  const response = NextResponse.next({ request });
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options as Parameters<typeof response.cookies.set>[2])
+          );
+        },
+      },
+    }
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  // Fetch role from DB via admin client isn't possible in Edge runtime;
+  // role stored in user_metadata at signup for middleware-level enforcement.
+  const role = (user.user_metadata?.role as string) ?? '';
+
+  for (const [roleKey, prefixes] of Object.entries(ROLE_ROUTES)) {
+    if (prefixes.some((p) => pathname.startsWith(p))) {
+      if (role !== roleKey) {
+        // Redirect to the user's own dashboard
+        const target = ROLE_ROUTES[role]?.[0] ?? '/login';
+        return NextResponse.redirect(new URL(target + '/dashboard', request.url));
+      }
     }
   }
 
-  return await updateSession(request);
+  return response;
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

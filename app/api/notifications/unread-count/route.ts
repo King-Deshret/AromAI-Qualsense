@@ -1,36 +1,17 @@
-import { NextResponse } from 'next/server';
-import { getAuthHeaders, getDaasUrl } from '@/lib/api/auth-headers';
+import { getServerSession } from '@/lib/auth';
+import { supabaseAdmin } from '@/lib/supabase';
+import { makeApiError } from '@/lib/utils';
 
-/**
- * GET /api/notifications/unread-count
- *
- * Returns the count of unread notifications for the current authenticated user.
- * Uses DaaS aggregate endpoint with filter on is_read = false.
- * DaaS permissions automatically scope notifications to user_id = $CURRENT_USER.
- *
- * Validates: Requirement 13.7
- */
 export async function GET() {
-  try {
-    const headers = await getAuthHeaders();
-    const daasUrl = getDaasUrl();
+  const user = await getServerSession();
+  if (!user) return makeApiError(401, 'UNAUTHORIZED', 'Unauthenticated');
 
-    // Use DaaS aggregate endpoint to count unread notifications
-    const response = await fetch(
-      `${daasUrl}/api/items/notifications?aggregate[count]=id&filter[is_read][_eq]=false`,
-      { headers, cache: 'no-store' }
-    );
+  const { count, error } = await supabaseAdmin
+    .from('notifications')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_read', false);
 
-    if (!response.ok) {
-      return NextResponse.json({ data: { count: 0 } });
-    }
-
-    const result = await response.json();
-    // DaaS aggregate returns: { data: [{ count: { id: "5" } }] }
-    const count = parseInt(result.data?.[0]?.count?.id || '0', 10);
-
-    return NextResponse.json({ data: { count } });
-  } catch {
-    return NextResponse.json({ data: { count: 0 } });
-  }
+  if (error) return makeApiError(500, 'INTERNAL_ERROR', error.message);
+  return Response.json({ count: count ?? 0 });
 }
